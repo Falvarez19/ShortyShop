@@ -1,0 +1,126 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Slider Principal -->
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="carousel-img-container">
+                <img src="{% static 'shop/images/slider1.jpg' %}" class="carousel-img" alt="Slider 1">
+            </div>
+            <div class="carousel-caption d-none d-md-block">
+                <h1>Bienvenido a ShortyShop</h1>
+                <p>Compra los mejores productos al mejor precio</p>
+                <a href="{% url 'products' %}" class="btn btn-danger">Comprar Ahora</a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="carousel-img-container">
+                <img src="{% static 'shop/images/slider2.jpg' %}" class="carousel-img" alt="Slider 2">
+            </div>
+            <div class="carousel-caption d-none d-md-block">
+                <h1>Nuevo Lanzamiento</h1>
+                <p>Descubre nuestra nueva colección</p>
+                <a href="{% url 'products' %}" class="btn btn-danger">Explorar</a>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </button>
+</div>
+
+<!-- Categorías -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Categorías</h2>
+    <div class="row text-center">
+        <!-- Categoría 1 -->
+        <div class="col-md-4 mb-4">
+            <div class="category-card">
+                <div id="category1Carousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="{% static 'shop/images/category1_1.jpg' %}" class="d-block w-100 category-img" alt="Categoría 1 Imagen 1">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{% static 'shop/images/category1_2.jpg' %}" class="d-block w-100 category-img" alt="Categoría 1 Imagen 2">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#category1Carousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#category1Carousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Categoría 1</h5>
+                    <a href="#" class="btn btn-dark">Ver más</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categoría 2 -->
+        <div class="col-md-4 mb-4">
+            <div class="category-card">
+                <div id="category2Carousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="{% static 'shop/images/category2_1.jpg' %}" class="d-block w-100 category-img" alt="Categoría 2 Imagen 1">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{% static 'shop/images/category2_2.jpg' %}" class="d-block w-100 category-img" alt="Categoría 2 Imagen 2">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#category2Carousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#category2Carousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Categoría 2</h5>
+                    <a href="#" class="btn btn-dark">Ver más</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categoría 3 -->
+        <div class="col-md-4 mb-4">
+            <div class="category-card">
+                <div id="category3Carousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="{% static 'shop/images/category3_1.jpg' %}" class="d-block w-100 category-img" alt="Categoría 3 Imagen 1">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{% static 'shop/images/category3_2.jpg' %}" class="d-block w-100 category-img" alt="Categoría 3 Imagen 2">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#category3Carousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#category3Carousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Categoría 3</h5>
+                    <a href="#" class="btn btn-dark">Ver más</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botón flotante de WhatsApp -->
+<a href="https://wa.me/1234567890" class="btn-whatsapp" target="_blank">
+    <img src="{% static 'shop/images/whatsapp-icon.png' %}" alt="WhatsApp">
+</a>
+
+{% endblock %}

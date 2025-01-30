@@ -1,0 +1,17 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<h1 class="text-center mb-4">Productos</h1>
+<div class="row">
+    <!-- Producto 1 -->
+    <div class="col-md-4">
+        <div class="product-card">
+            <img src="{% static 'shop/images/product1.jpg' %}" alt="Producto 1">
+            <h5>Producto 1</h5>
+            <p>$50.00</p>
+            <a href="{% url 'product_detail' 1 %}">Ver Detalles</a>
+        </div>
+    </div>
+    <!-- Más productos aquí -->
+</div>
+{% endblock %}
