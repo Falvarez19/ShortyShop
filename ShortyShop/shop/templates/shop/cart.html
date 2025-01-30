@@ -1,0 +1,34 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<h1 class="text-center mb-4">Carrito de Compras</h1>
+<div class="table-responsive">
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Producto 1</td>
+                <td>2</td>
+                <td>$50.00</td>
+                <td>$100.00</td>
+                <td>
+                    <button class="btn btn-danger btn-sm">Eliminar</button>
+                </td>
+            </tr>
+            <!-- Más productos -->
+        </tbody>
+    </table>
+</div>
+<div class="text-end">
+    <h4>Total a pagar: $100.00</h4>
+    <button class="btn btn-success">Proceder al Pago</button>
+</div>
+{% endblock %}
