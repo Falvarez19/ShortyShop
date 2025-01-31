@@ -64,6 +64,20 @@ body, html {
     top: -5px;
     right: -10px;
 }
+.category-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: 80px; /* Asegura que no quede oculta bajo el navbar */
+}
+
+.empty-category-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 20px;
+}
+
 /* ==================== FORMULARIO DE LOGIN DESPLEGABLE ==================== */
 .login-dropdown {
     width: 350px; /* Tamaño fijo */

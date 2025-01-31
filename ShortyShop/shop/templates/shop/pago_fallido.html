@@ -1,0 +1,8 @@
+{% extends "shop/base.html" %}
+{% block content %}
+    <div class="container text-center mt-5">
+        <h2 class="text-danger">Pago fallido</h2>
+        <p>Hubo un problema con tu pago. Intenta nuevamente.</p>
+        <a href="{% url 'cart' %}" class="btn btn-warning">Volver al carrito</a>
+    </div>
+{% endblock %}

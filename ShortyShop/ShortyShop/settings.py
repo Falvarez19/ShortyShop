@@ -131,3 +131,7 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",  # Mantiene el backend original
 ]
 AUTH_USER_MODEL = 'accounts.CustomUser'  # Si tienes un modelo personalizado
+
+# Configuración de MercadoPago
+MERCADOPAGO_ACCESS_TOKEN = "TU_ACCESS_TOKEN"
+MERCADOPAGO_PUBLIC_KEY = "TU_PUBLIC_KEY"

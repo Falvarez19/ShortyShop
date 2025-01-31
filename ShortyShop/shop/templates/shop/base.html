@@ -36,9 +36,9 @@
                             Hombre
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Categoría 1</a></li>
-                            <li><a class="dropdown-item" href="#">Categoría 2</a></li>
-                            <li><a class="dropdown-item" href="#">Categoría 3</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category_view' 'Zapatillas' 'Hombre' %}">Zapatillas</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category_view' 'Ropa' 'Hombre' %}">Ropa</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category_view' 'Accesorios' 'Hombre' %}">Accesorios</a></li>
                         </ul>
                     </li>
 
@@ -48,9 +48,9 @@
                             Mujer
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Categoría 1</a></li>
-                            <li><a class="dropdown-item" href="#">Categoría 2</a></li>
-                            <li><a class="dropdown-item" href="#">Categoría 3</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category_view' 'Zapatillas' 'Mujer' %}">Zapatillas</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category_view' 'Ropa' 'Mujer' %}">Ropa</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category_view' 'Accesorios' 'Mujer' %}">Accesorios</a></li>
                         </ul>
                     </li>
 
@@ -60,21 +60,9 @@
                             Niños
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Categoría 1</a></li>
-                            <li><a class="dropdown-item" href="#">Categoría 2</a></li>
-                            <li><a class="dropdown-item" href="#">Categoría 3</a></li>
-                        </ul>
-                    </li>
-
-                    <!-- Dropdown Accesorios -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="accesoriosDropdown" role="button" data-bs-toggle="dropdown">
-                            Accesorios
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Categoría 1</a></li>
-                            <li><a class="dropdown-item" href="#">Categoría 2</a></li>
-                            <li><a class="dropdown-item" href="#">Categoría 3</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category_view' 'Zapatillas' 'Niños' %}">Zapatillas</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category_view' 'Ropa' 'Niños' %}">Ropa</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category_view' 'Accesorios' 'Niños' %}">Accesorios</a></li>
                         </ul>
                     </li>
 

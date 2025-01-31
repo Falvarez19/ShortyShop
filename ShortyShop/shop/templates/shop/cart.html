@@ -39,11 +39,33 @@
 
             <div class="text-center mt-4">
                 <h4 class="fw-bold">Total: ${{ cart.total_price }}</h4>
-                <button class="btn btn-success w-100 mt-3">Finalizar Compra</button>
+
+                <!-- Botón para iniciar el pago con MercadoPago -->
+                <button id="pay-button" class="btn btn-success w-100 mt-3">Ir a Pagar</button>
             </div>
         {% else %}
             <p class="text-center">Tu carrito está vacío.</p>
         {% endif %}
     </div>
 </div>
+
+<!-- Integración del SDK de MercadoPago -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script>
+    const mp = new MercadoPago("{{ settings.MERCADOPAGO_PUBLIC_KEY }}", {
+        locale: "es-AR"
+    });
+
+    document.getElementById("pay-button").addEventListener("click", function () {
+        fetch("{% url 'checkout_mercadopago' %}")  // Llama a la vista de pago
+            .then(response => response.json())
+            .then(data => {
+                mp.checkout({
+                    preference: {
+                        id: data.preference_id
+                    }
+                });
+            });
+    });
+</script>
 {% endblock %}
