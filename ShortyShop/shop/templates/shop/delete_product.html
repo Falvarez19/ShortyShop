@@ -1,0 +1,16 @@
+{% extends "shop/base.html" %}
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="register-card text-center">
+        <h2 class="text-center">Eliminar Producto</h2>
+        <p>¿Estás seguro de que deseas eliminar <strong>{{ product.name }}</strong>?</p>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger w-100">Eliminar</button>
+        </form>
+        <p class="text-center mt-3">
+            <a href="{% url 'product_list' %}" class="text-danger">Cancelar</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

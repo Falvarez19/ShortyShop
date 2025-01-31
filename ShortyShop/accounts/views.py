@@ -25,9 +25,15 @@ def user_register(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)  # Inicia sesión automáticamente después de registrarse
-            return redirect("home")  # Redirige a la página principal
+            user = form.save(commit=False)
+            user.save()
+
+            # Especificamos el backend de autenticación manualmente
+            user.backend = "django.contrib.auth.backends.ModelBackend"
+
+            login(request, user)  # Iniciar sesión automáticamente después de registrarse
+            return redirect("home")  # Redirige a la página de inicio
+
     else:
         form = CustomUserCreationForm()
     return render(request, "accounts/register.html", {"form": form})

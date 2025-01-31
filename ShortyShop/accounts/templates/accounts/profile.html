@@ -3,8 +3,10 @@
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="register-card">
-        <h2 class="text-center">Perfil de {{ user.username }}</h2>
-        <p><strong>Correo:</strong> {{ user.email }}</p>
+        <h2 class="text-center">Hola! {{ user.first_name }} {{ user.last_name }}</h2>
+        <p><strong>Correo:</strong> {{ user.email }}
+         <p><strong>Fecha de nacimiento: </strong>{{ user.birth_date }}</p>
+        <p><strong>Dirección:</strong> {{ user.address }}</p>
         <a href="{% url 'password_change' %}" class="btn btn-dark w-100 mt-3">Cambiar Contraseña</a>
     </div>
 </div>

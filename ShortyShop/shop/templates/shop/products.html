@@ -11,6 +11,7 @@
             <p>$50.00</p>
             <a href="{% url 'product_detail' 1 %}">Ver Detalles</a>
         </div>
+        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Añadir al carrito</a>
     </div>
     <!-- Más productos aquí -->
 </div>

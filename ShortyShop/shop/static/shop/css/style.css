@@ -8,55 +8,66 @@ body, html {
     overflow-x: hidden;
 }
 
-/* ==================== NAVBAR ==================== */
-/* Navbar más compacta */
+/* ==================== NAVBAR ESTILO ==================== */
 .navbar {
-    background-color: #000; /* Negro */
+    background-color: #000; /* Fondo negro */
     border-bottom: 2px solid #f00; /* Línea roja */
-    padding: 5px 15px; /* Reducción del padding vertical */
-    min-height: 60px; /* Altura mínima más pequeña */
+    padding: 10px 15px; /* Ajuste del padding */
+    min-height: 40px; /* Tamaño más compacto */
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
-/* Ajuste del logo en la navbar */
-.navbar .navbar-brand img {
-    max-height: 50px; /* Ajuste para que el logo no sea demasiado grande */
-    width: auto;
-    transition: transform 0.3s ease-in-out;
+/* Alineación de los elementos dentro de la navbar */
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaciado entre botones */
 }
 
-/* Estilo de los enlaces de la navbar */
-.navbar-nav .nav-link {
+/* Ajuste del botón de "Iniciar Sesión" */
+.navbar-nav .nav-item.dropdown {
+    position: relative;
+}
+
+/* Elimina cualquier marcador no deseado en la navbar */
+.navbar-nav .nav-item::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* También puedes asegurarte de que los elementos no tengan estilos no deseados */
+.navbar-nav .nav-item {
+    list-style: none !important;
+}
+
+/* Estilos del carrito */
+.cart-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     font-weight: bold;
-    text-transform: uppercase;
-    font-size: 14px;
-    color: #fff;
-    padding: 8px 12px; /* Reducción del padding interno */
-    transition: color 0.3s ease-in-out;
+    color: white;
 }
 
-.navbar-nav .nav-link:hover {
-    color: #f00;
-}
-
-/* Navbar cuando se hace scroll */
-.navbar.scrolled {
-    background-color: #000;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.navbar.scrolled .nav-link {
-    color: #fff;
-}
-
-.navbar.scrolled .nav-link:hover {
-    color: #f00;
+/* Ajuste del número del carrito */
+.cart-icon .cart-count {
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 4px 6px;
+    position: absolute;
+    top: -5px;
+    right: -10px;
 }
 /* ==================== FORMULARIO DE LOGIN DESPLEGABLE ==================== */
 .login-dropdown {
     width: 350px; /* Tamaño fijo */
-    max-width: 90vw; /* No se sale en pantallas pequeñas */
+    max-width: 80vw; /* No se sale en pantallas pequeñas */
     position: absolute;
     top: 100%; /* Se despliega justo debajo del botón */
     left: 50%; /* Centrarlo respecto al botón */
@@ -263,8 +274,8 @@ body, html {
 }
 
 /* ==================== FOOTER ==================== */
-footer {
-    background-color: #000; /* Igual a la navbar */
+.footer {
+    background-color: #000;
     color: #fff;
     text-align: center;
     padding: 20px 0;
@@ -274,7 +285,6 @@ footer {
     border-top: 2px solid #f00;
 }
 
-/* Iconos de redes sociales en el footer */
 .footer-icons {
     display: flex;
     justify-content: center;
@@ -291,7 +301,6 @@ footer {
 .footer-icons i:hover {
     color: #fff;
 }
-
 /* ==================== BOTÓN FLOTANTE DE WHATSAPP ==================== */
 .btn-whatsapp {
     position: fixed;

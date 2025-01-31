@@ -7,10 +7,15 @@ class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True, label="Nombre")
     last_name = forms.CharField(max_length=30, required=True, label="Apellido")
     address = forms.CharField(max_length=255, required=True, label="Dirección", widget=forms.TextInput(attrs={"placeholder": "Ejemplo: Calle Falsa 123"}))
+    birth_date = forms.DateField(
+        required=True,
+        widget=forms.DateInput(attrs={"type": "date"}),  # Permite que se seleccione desde un calendario
+        label="Fecha de nacimiento"
+    )
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'first_name', 'last_name', 'address', 'password1', 'password2']
+        fields = ["email", "first_name", "last_name", "address", "birth_date", "password1", "password2"]
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
