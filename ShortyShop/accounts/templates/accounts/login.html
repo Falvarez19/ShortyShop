@@ -6,9 +6,27 @@
         <h2 class="text-center">Iniciar Sesión</h2>
         <form method="POST" class="mx-auto" style="max-width: 400px;">
             {% csrf_token %}
-            {{ form.as_p }}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger text-center">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
             <button type="submit" class="btn btn-dark w-100">Iniciar Sesión</button>
         </form>
+        
         <p class="text-center mt-3">
             ¿No tienes cuenta? <a href="{% url 'register' %}" class="text-danger">Regístrate aquí</a>.
         </p>

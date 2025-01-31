@@ -2,19 +2,24 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from .forms import CustomUserCreationForm
-from .forms import CustomAuthenticationForm
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 # Vista para el login
 def user_login(request):
     if request.method == "POST":
-        form = CustomAuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        user = authenticate(request, username=email, password=password)  # Se usa "username=email"
+        
+        if user is not None:
             login(request, user)
-            return redirect("home")  # Redirige a la página principal después de iniciar sesión
-    else:
-        form = CustomAuthenticationForm()
-    return render(request, "accounts/login.html", {"form": form})
+            next_url = request.POST.get("next") or "home"
+            return redirect(next_url)
+        else:
+            messages.error(request, "Correo o contraseña incorrectos.")
+
+    return render(request, "accounts/login.html", {"next": request.GET.get("next", "")})
 # Vista para el registro
 def user_register(request):
     if request.method == "POST":
@@ -29,6 +34,9 @@ def user_register(request):
 
 # Vista para el logout
 def user_logout(request):
-    if request.method == "POST":
-        logout(request)
-        return redirect("home")  # Redirige al home después de cerrar sesión
+    logout(request)
+    return redirect('home')  # Asegúrate de que 'home' es el nombre de la vista de inicio
+
+@login_required
+def profile_view(request):
+    return render(request, 'accounts/profile.html')

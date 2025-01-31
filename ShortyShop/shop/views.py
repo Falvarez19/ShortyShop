@@ -1,6 +1,6 @@
-# shop/views.py
-
 from django.shortcuts import render
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
 # Página principal
 def home(request):
