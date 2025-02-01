@@ -1,0 +1,19 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block content %}
+<h1 class="text-center mb-4">Productos</h1>
+<div class="row">
+    {% for product in products %}
+    <div class="col-md-4">
+        <div class="product-card">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            <h5>{{ product.name }}</h5>
+            <p>${{ product.price }}</p>
+            <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary">Ver Detalles</a>
+        </div>
+        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Añadir al carrito</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
