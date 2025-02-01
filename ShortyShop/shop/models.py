@@ -20,8 +20,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio")
     stock = models.PositiveIntegerField(verbose_name="Stock Disponible", default=0)
     image = models.ImageField(upload_to="products/", verbose_name="Imagen del Producto", blank=True, null=True)
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, verbose_name="Categoría", default="Zapatillas")  # Valor por defecto
-    gender = models.CharField(max_length=50, choices=GENDER_CHOICES, verbose_name="Género", default="Unisex")  # Valor por defecto
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, verbose_name="Categoría", default="Zapatillas")
+    gender = models.CharField(max_length=50, choices=GENDER_CHOICES, verbose_name="Género", default="Unisex")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -31,11 +31,11 @@ class Product(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.category} ({self.gender})"
-    
+
     def get_absolute_url(self):
-        """Devuelve la URL de detalle del producto"""
         from django.urls import reverse
         return reverse("product_detail", kwargs={"pk": self.pk})
+
 
 class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
@@ -44,9 +44,17 @@ class Cart(models.Model):
     def total_price(self):
         return sum(item.total_price() for item in self.items.all())
 
+    def __str__(self):
+        return f"Carrito de {self.user}" if self.user else "Carrito Anónimo"
+
+
 class CartItem(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # Ahora Product ya está definido antes
+    cart = models.ForeignKey(Cart, related_name="items", on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
+    def total_price(self):
+        return self.product.price * self.quantity
+
     def __str__(self):
-        return f"{self.quantity} x {self.product.name}"
+        return f"{self.quantity} x {self.product.name} (Carrito {self.cart.user})"

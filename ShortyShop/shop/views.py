@@ -8,6 +8,7 @@ from .forms import ProductForm
 import mercadopago
 from django.conf import settings
 from django.http import JsonResponse
+from django.shortcuts import render
 
 # Página principal
 def home(request):
@@ -19,7 +20,8 @@ def products(request):
 
 # Página de detalles de un producto
 def product_detail(request, product_id):
-    return render(request, "shop/product_detail.html", {"product_id": product_id})
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, 'shop/product_detail.html', {'product': product})
 
 # Página del carrito de compras
 
@@ -34,15 +36,13 @@ def cart(request):
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
 
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
     if not created:
         cart_item.quantity += 1
-    cart_item.save()
+        cart_item.save()
 
-    return redirect("cart")
-
-
+    return redirect('cart')
 @login_required
 def remove_from_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
@@ -104,9 +104,8 @@ def delete_product(request, product_id):
     return render(request, "shop/delete_product.html", {"product": product})
 
 def product_list(request):
-    products = Product.objects.all()
+    products = Product.objects.all()  # Obtiene todos los productos
     return render(request, "shop/product_list.html", {"products": products})
-
 
 def about(request):
     return render(request, "shop/about.html")
@@ -152,3 +151,7 @@ def category_view(request, category_name, gender_name):
     products = Product.objects.filter(category=category_name, gender=gender_name)
     return render(request, "shop/category.html", {"products": products, "category": category_name, "gender": gender_name})
 
+
+
+def en_construccion(request):
+    return render(request, 'shop/en_construccion.html')

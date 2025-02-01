@@ -195,8 +195,8 @@ body, html {
 #heroCarousel {
     width: 100%;
     max-width: 100vw;
-    height: 60vh; /* Altura fija para evitar distorsión */
-    margin: 0 auto;
+    height: 70vh; /* Altura fija para evitar distorsión */
+    margin: -30px auto;
     padding: 0;
     display: flex;
     align-items: center;
@@ -329,4 +329,8 @@ body, html {
     height: 45px;
     border-radius: 50%;
     background-color: #25D366;
+}
+
+body {
+    padding-top: 100px; /* Ajusta según el tamaño de tu navbar */
 }
