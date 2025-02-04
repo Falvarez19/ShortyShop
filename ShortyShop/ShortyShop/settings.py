@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure--e9sfplodz6xiug31j6m#!pw)jjp12*gqdyp8fnc+q$wo7ye=d
 DEBUG = True
 
 ALLOWED_HOSTS = []
+HANDLER403 = "shop.views.error_403"
 
 
 import os

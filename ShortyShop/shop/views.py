@@ -9,8 +9,10 @@ import mercadopago
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
+from .models import Product 
 
 # Página principal
+
 def home(request):
     return render(request, "shop/home.html")
 
@@ -24,8 +26,6 @@ def product_detail(request, product_id):
     return render(request, 'shop/product_detail.html', {'product': product})
 
 # Página del carrito de compras
-
-
 @login_required
 def cart(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
@@ -65,33 +65,40 @@ def update_cart(request, item_id):
 def is_admin(user):
     return user.is_authenticated and user.is_staff  # Solo administradores
 
-
+#añadir producto
 @user_passes_test(is_admin)
 def add_product(request):
+    categories = Product.objects.values('category').distinct()  # Obtiene las categorías únicas
+    form = ProductForm()
+
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect("product_list")
-    else:
-        form = ProductForm()
 
-    return render(request, "shop/add_product.html", {"form": form})
+    return render(request, "shop/add_product.html", {"form": form, "categories": categories})
+
 
 
 @user_passes_test(is_admin)
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    categories = Product.objects.values_list('category', flat=True).distinct()  # Obtiene las categorías únicas
 
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
             return redirect("product_list")
+
     else:
         form = ProductForm(instance=product)
 
-    return render(request, "shop/edit_product.html", {"form": form, "product": product})
+    return render(request, "shop/edit_product.html", {
+        "form": form,
+        "categories": categories,
+    })
 
 
 @user_passes_test(is_admin)
@@ -155,3 +162,6 @@ def category_view(request, category_name, gender_name):
 
 def en_construccion(request):
     return render(request, 'shop/en_construccion.html')
+
+def error_403(request, exception):
+    return render(request, "shop/403.html", status=403)

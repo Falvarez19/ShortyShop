@@ -1,13 +1,64 @@
 {% extends "shop/base.html" %}
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="register-card">
-        <h2 class="text-center">Editar Producto</h2>
-        <form method="POST" enctype="multipart/form-data">
+    <div class="card p-4 shadow-lg" style="max-width: 600px; width: 100%;">
+        <h2 class="text-center mb-4">Editar Producto</h2>
+        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %}
-            {{ form.as_p }}
+
+            <div class="mb-3">
+                <label for="id_name" class="form-label fw-bold">Nombre del Producto:</label>
+                <input type="text" name="name" id="id_name" class="form-control" value="{{ form.instance.name }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_description" class="form-label fw-bold">Descripción:</label>
+                <textarea name="description" id="id_description" class="form-control" rows="4" required>{{ form.instance.description }}</textarea>
+            </div>
+
+            <div class="mb-3 row">
+                <div class="col-md-6">
+                    <label for="id_price" class="form-label fw-bold">Precio:</label>
+                    <input type="number" name="price" id="id_price" class="form-control" value="{{ form.instance.price }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="id_stock" class="form-label fw-bold">Stock Disponible:</label>
+                    <input type="number" name="stock" id="id_stock" class="form-control" value="{{ form.instance.stock }}" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_category" class="form-label fw-bold">Categoría:</label>
+                <select name="category" id="id_category" class="form-select" required>
+                    <option value="" disabled selected>Selecciona una categoría</option>
+                    {% for category in categories %}
+                        <option value="{{ category }}" {% if category == form.instance.category %}selected{% endif %}>{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_gender" class="form-label fw-bold">Género:</label>
+                <select name="gender" id="id_gender" class="form-select" required>
+                    <option value="Hombre" {% if form.instance.gender == "Hombre" %}selected{% endif %}>Hombre</option>
+                    <option value="Mujer" {% if form.instance.gender == "Mujer" %}selected{% endif %}>Mujer</option>
+                    <option value="Niños" {% if form.instance.gender == "Niños" %}selected{% endif %}>Niños</option>
+                    <option value="Unisex" {% if form.instance.gender == "Unisex" %}selected{% endif %}>Unisex</option>
+                </select>
+            </div>
+
+            <div class="mb-3 text-center">
+                <label class="form-label fw-bold">Imagen del Producto:</label><br>
+                {% if form.instance.image %}
+                    <img src="{{ form.instance.image.url }}" class="img-fluid mb-2 border" style="max-height: 180px; border-radius: 8px;">
+                    <p class="text-muted">Actualmente: <a href="{{ form.instance.image.url }}" target="_blank">{{ form.instance.image }}</a></p>
+                {% endif %}
+                <input type="file" name="image" id="id_image" class="form-control">
+            </div>
+
             <button type="submit" class="btn btn-dark w-100">Actualizar Producto</button>
         </form>
+
         <p class="text-center mt-3">
             <a href="{% url 'product_list' %}" class="text-danger">Volver a la tienda</a>
         </p>

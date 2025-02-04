@@ -19,6 +19,14 @@
             <p class="text-muted">Categoría: <strong>{{ product.category }}</strong></p>
             <p class="lead">{{ product.description }}</p>
             <h4 class="text-danger fw-bold">${{ product.price }}</h4>
+            <h4 class="text-danger fw-bold">${{ product.price }}</h4>
+            {% if request.user.is_staff %}
+                <a href="{% url 'edit_product' product.id %}" class="btn btn-warning">Editar Producto</a>
+                <form method="POST" action="{% url 'delete_product' product.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Eliminar Producto</button>
+                </form>
+            {% endif %}
 
             <!-- Formulario para agregar al carrito -->
             <form method="POST" action="{% url 'add_to_cart' product.id %}">

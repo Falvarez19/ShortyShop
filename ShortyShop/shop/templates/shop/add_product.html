@@ -1,13 +1,58 @@
 {% extends "shop/base.html" %}
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="register-card">
-        <h2 class="text-center">Agregar Producto</h2>
+    <div class="card p-4 shadow-lg" style="max-width: 500px; width: 100%;">
+        <h2 class="text-center mb-4">Agregar Producto</h2>
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
+
+            <div class="mb-3">
+                <label for="id_name" class="form-label">Nombre del Producto:</label>
+                <input type="text" name="name" id="id_name" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_description" class="form-label">Descripción:</label>
+                <textarea name="description" id="id_description" class="form-control" rows="4" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_price" class="form-label">Precio:</label>
+                <input type="number" name="price" id="id_price" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_stock" class="form-label">Stock Disponible:</label>
+                <input type="number" name="stock" id="id_stock" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_category" class="form-label">Categoría:</label>
+                <select name="category" id="id_category" class="form-select" required>
+                    {% for product in categories %}
+                        <option value="{{ product.category }}">{{ product.category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_gender" class="form-label">Género:</label>
+                <select name="gender" id="id_gender" class="form-select" required>
+                    <option value="Hombre">Hombre</option>
+                    <option value="Mujer">Mujer</option>
+                    <option value="Niños">Niños</option>
+                    <option value="Unisex">Unisex</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="id_image" class="form-label">Imagen del Producto:</label>
+                <input type="file" name="image" id="id_image" class="form-control">
+            </div>
+
             <button type="submit" class="btn btn-dark w-100">Subir Producto</button>
         </form>
+
         <p class="text-center mt-3">
             <a href="{% url 'product_list' %}" class="text-danger">Volver a la tienda</a>
         </p>

@@ -1,13 +1,25 @@
-/* ==================== ESTILOS GENERALES ==================== */
+/* ==================== FUENTE PERSONALIZADA ==================== */
+/* Importar Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* Aplicar la nueva fuente a todo el sitio */
 body, html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #fff;
-    color: #000;
-    overflow-x: hidden;
+    font-family: 'Poppins', sans-serif; /* Usa la nueva fuente */
 }
 
+/* ==================== AJUSTE DE TAMAÑO DE IMÁGENES ==================== */
+
+/* Imágenes en la lista de productos */
+.card-img-top {
+    max-height: 200px; /* Altura máxima */
+    object-fit: contain; /* Evita recortes y mantiene proporciones */
+}
+
+/* Imagen principal en la página de detalles */
+.product-detail-image {
+    max-width: 100%; /* Reduce el tamaño de la imagen */
+    height: auto;
+}
 /* ==================== NAVBAR ESTILO ==================== */
 .navbar {
     background-color: #000; /* Fondo negro */
