@@ -139,14 +139,10 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Configuración de archivos estáticos
 STATIC_URL = '/static/'
-
-# Donde se almacenarán los archivos estáticos en producción
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Agrega esta línea para evitar la advertencia
-STATICFILES_DIRS = [BASE_DIR / 'static']
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -1,24 +1,17 @@
-ARG PYTHON_VERSION=3.12-slim
+# Usa la imagen oficial de Python
+FROM python:3.12
 
-FROM python:${PYTHON_VERSION}
-
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-RUN mkdir -p /code
-
+# Establecer el directorio de trabajo en el contenedor
 WORKDIR /code
 
-COPY requirements.txt /tmp/requirements.txt
-RUN set -ex && \
-    pip install --upgrade pip && \
-    pip install -r /tmp/requirements.txt && \
-    rm -rf /root/.cache/
-COPY . /code
+# Copiar los archivos del proyecto
+COPY . /code/
 
-ENV SECRET_KEY "mJQkMh2nSYM4CsFFPAxuCCimsaNaDJR1gjJ4n4zct4FRYWZpXD"
-RUN python manage.py collectstatic --noinput
+# Instalar dependencias
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Exponer el puerto 8000
 EXPOSE 8000
 
-CMD ["gunicorn","--bind",":8000","--workers","2","ShortyShop.wsgi"]
+# Comando para ejecutar Django en producción
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "ShortyShop.wsgi:application"]
