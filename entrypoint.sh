@@ -1,14 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 set -e
 
-# Variables por si querés sobreescribir la ruta del sqlite en fly.toml
-export SQLITE_PATH=${SQLITE_PATH:-/app/data/db.sqlite3}
-
-python manage.py collectstatic --noinput
 python manage.py migrate --noinput
+python manage.py collectstatic --noinput
 
-# Ajusta "shortyshop.wsgi" al paquete de tu proyecto
-exec gunicorn shortyshop.wsgi:application \
-  --bind 0.0.0.0:${PORT} \
-  --workers 3 \
-  --timeout 60
+exec gunicorn ShortyShop.wsgi:application --bind 0.0.0.0:8000 --workers ${WEB_CONCURRENCY:-3}

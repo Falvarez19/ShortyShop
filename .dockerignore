@@ -1,11 +1,12 @@
-.git
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 *.sqlite3
-/media
-/staticfiles
+media/
+staticfiles/
+node_modules/
 .env
-.idea
-.vscode
+.git
+.gitignore
+.DS_Store
