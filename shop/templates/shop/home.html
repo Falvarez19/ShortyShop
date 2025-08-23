@@ -1,0 +1,73 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Slider Principal (full-bleed) -->
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+  </div>
+
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="{% static 'shop/images/slider1.png' %}" class="d-block w-100 carousel-img" alt="Slider 1">
+    </div>
+    <div class="carousel-item">
+      <img src="{% static 'shop/images/slider2.png' %}" class="d-block w-100 carousel-img" alt="Slider 2">
+    </div>
+    <div class="carousel-item">
+      <img src="{% static 'shop/images/slider3.png' %}" class="d-block w-100 carousel-img" alt="Slider 3">
+    </div>
+  </div>
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+</div>
+
+<!-- Marcas -->
+<div class="brand-slider px-3 py-2">
+  {% for marca in brands %}
+    <a href="{% url 'products_by_brand' marca %}" class="brand-item text-center text-decoration-none">
+      <img src="{% static 'shop/images/LogoMarca/'|add:marca|add:'.png' %}" alt="{{ marca }}">
+      <span>{{ marca }}</span>
+    </a>
+  {% endfor %}
+</div>
+
+<!-- Lo más vendido -->
+<div class="container mt-5">
+  <h3 class="text-center mb-4">🔥 Lo más vendido</h3>
+  <div class="row">
+    {% for producto in best_sellers %}
+      <div class="col-md-3 mb-4">
+        <div class="product-card">
+          <img src="{{ producto.image.url }}" class="img-fluid" alt="{{ producto.name }}">
+          <h6 class="mt-2">{{ producto.name }}</h6>
+          <p class="text-success fw-bold">${{ producto.price }}</p>
+          <a href="{% url 'product_detail' producto.id %}" class="btn btn-sm btn-outline-primary">Ver más</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Servicios -->
+<div class="container mt-5 py-4 bg-light rounded">
+  <div class="row align-items-center">
+    <div class="col-md-6 text-center">
+      <img src="{% static 'shop/images/servicio-mecanico.png' %}" alt="Servicios" class="img-fluid" style="max-height:250px;">
+    </div>
+    <div class="col-md-6">
+      <h4>🔧 Servicios de Mecánica</h4>
+      <p>Ofrecemos servicios de reparación, diagnóstico y mantenimiento automotriz profesional. Tu vehículo en manos expertas.</p>
+      <a href="{% url 'about' %}" class="btn btn-dark">Conocé más</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

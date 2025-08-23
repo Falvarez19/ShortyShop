@@ -1,0 +1,117 @@
+{% extends "shop/base.html" %}
+{% load humanize %}
+{% block content %}
+<div class="container-fluid mt-5">
+  <div class="row">
+
+    <!-- Barra lateral de filtros (sticky en desktop) -->
+    <div class="col-lg-3 px-4 sidebar filters-sticky">
+      <form method="GET" id="filterForm">
+        <!-- MARCAS -->
+        <h6 class="fw-bold mb-2">Marcas</h6>
+        {% for key, label in brands %}
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="brand"
+              id="brand{{ key }}"
+              value="{{ key }}"
+              {% if selected_brand == key %}checked{% endif %}
+              onchange="this.form.submit()"
+            >
+            <label class="form-check-label" for="brand{{ key }}">{{ label }}</label>
+          </div>
+        {% endfor %}
+
+        <!-- MODELOS (según marca seleccionada) -->
+        {% if models %}
+          <hr>
+          <h6 class="fw-bold mt-3 mb-2">Modelos</h6>
+          <select name="model" class="form-select mb-3" onchange="this.form.submit()">
+            <option value="">Todos los modelos</option>
+            {% for model in models %}
+              <option value="{{ model.id }}" {% if selected_model == model.id|stringformat:"s" %}selected{% endif %}>
+                {{ model.name }}
+              </option>
+            {% endfor %}
+          </select>
+        {% endif %}
+
+        <!-- ORDEN -->
+        <hr>
+        <h6 class="fw-bold mt-3 mb-2">Ordenar por</h6>
+        <select name="sort" class="form-select" onchange="this.form.submit()">
+          <option value="">Sin orden</option>
+          <option value="price_asc"  {% if selected_sort == 'price_asc'  %}selected{% endif %}>Menor precio</option>
+          <option value="price_desc" {% if selected_sort == 'price_desc' %}selected{% endif %}>Mayor precio</option>
+        </select>
+      </form>
+    </div>
+
+    <!-- Lista de productos -->
+    <div class="col-lg-9">
+      <h2 class="text-center mb-4">
+        Todos los Productos
+        <span class="results-badge ms-2">{{ products|length }}</span>
+      </h2>
+
+      {% if products %}
+        <div class="list-group">
+          {% for product in products %}
+            <div class="list-group-item product-row d-flex flex-wrap align-items-center justify-content-between mb-3 p-3">
+              <div class="d-flex align-items-center gap-3 flex-wrap">
+                {% if product.image %}
+                  <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-thumb">
+                {% else %}
+                  <img src="https://via.placeholder.com/120" alt="Sin imagen" class="product-thumb">
+                {% endif %}
+                <div>
+                  <h5 class="mb-1">{{ product.name }}</h5>
+                  <p class="mb-1 text-muted">{{ product.category }} — {{ product.marca }}</p>
+                  <!-- Precio con puntos de miles -->
+                  <p class="text-success fw-bold mb-1">
+                    ${{ product.price|floatformat:0|intcomma:True }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="action-buttons mt-3 mt-md-0">
+                <!-- Ver detalles -->
+                <a href="{% url 'product_detail' product.id %}" class="btn-action btn-detail btn-action-xs">
+                  <i class="bi bi-eye"></i> Ver detalles
+                </a>
+
+                <!-- Agregar al carrito (1 unidad por defecto) -->
+                <form method="post" action="{% url 'add_to_cart' product.id %}" class="d-inline m-0">
+                  {% csrf_token %}
+                  <input type="hidden" name="quantity" value="1">
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <button type="submit" class="btn-action btn-add btn-action-xs">
+                    <i class="bi bi-cart-plus"></i> Agregar
+                  </button>
+                </form>
+
+                {% if request.user.is_staff %}
+                  <a href="{% url 'edit_product' product.id %}" class="btn-action btn-edit btn-action-xs">
+                    <i class="bi bi-pencil"></i> Editar
+                  </a>
+                  <form method="POST" action="{% url 'delete_product' product.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-action btn-delete btn-action-xs">
+                      <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-center">No hay productos disponibles con estos filtros.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

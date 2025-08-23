@@ -1,0 +1,312 @@
+/* ==================== FUENTE PERSONALIZADA ==================== */
+/* Importar Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* Aplicar la nueva fuente a todo el sitio */
+body, html {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ==================== AJUSTE DE TAMAÑO DE IMÁGENES ==================== */
+
+/* Imágenes en la lista de productos */
+.card-img-top {
+    max-height: 200px;
+    object-fit: contain;
+}
+
+/* Imagen principal en la página de detalles */
+.product-detail-image {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==================== NAVBAR ESTILO ==================== */
+.navbar {
+    background-color: #ffffff;
+    border-bottom: 2px solid #ddd;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: Arial, sans-serif;
+}
+
+/* Alineación de los elementos dentro de la navbar */
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Estilo de los enlaces de navegación */
+.navbar-nav .nav-item a {
+    color: #333 !important;
+    font-size: 14px;
+    font-weight: normal;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-item a:hover {
+    color: #000 !important;
+}
+
+/* Ajuste del carrito */
+.cart-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
+    color: #333 !important;
+}
+
+/* Ajustar el color del texto en la navbar */
+.navbar-nav .nav-link {
+    color: #333 !important;
+    font-weight: bold;
+}
+
+/* Asegurar que los íconos de usuario y carrito sean oscuros */
+.navbar .nav-link i {
+    color: #333 !important;
+}
+
+/* Asegurar que el botón de Iniciar Sesión sea visible */
+.navbar .nav-item.dropdown .nav-link {
+    color: #333 !important;
+}
+
+/* Cambiar color al pasar el mouse */
+.navbar-nav .nav-link:hover,
+.navbar .nav-item.dropdown .nav-link:hover {
+    color: #000 !important;
+}
+
+/* ==================== CARRUSEL PRINCIPAL ==================== */
+#heroCarousel {
+    width: 100%;
+    max-width: 100vw;
+    height: 70vh;
+    margin: -30px auto;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Contenedor de imágenes del carrusel */
+.carousel-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.carousel-item {
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ==================== CARRUSELES SECUNDARIOS ==================== */
+.secondary-carousel {
+    width: 100%;
+    max-width: 100vw;
+    height: 300px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Ajustar imágenes dentro del carrusel */
+.secondary-carousel .carousel-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.secondary-carousel .carousel-item {
+    width: 100%;
+    height: 100%;
+}
+
+.secondary-carousel .carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ==================== CATEGORÍAS ==================== */
+.categories-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    position: relative; /* Evita que los dropdowns se corten */
+}
+
+.category-card {
+    background-color: #ffffff;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding-bottom: 15px;
+    border-radius: 5px;
+    overflow: visible !important; /* Asegura que los dropdowns no se corten */
+    color: #333;
+    width: 100%;
+    max-width: 320px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.category-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: contain;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+/* RESPONSIVE: Ajustar distribución en diferentes pantallas */
+@media (max-width: 1024px) {
+    .category-card {
+        width: calc(50% - 20px);
+    }
+}
+
+@media (max-width: 768px) {
+    .category-card {
+        width: 100%;
+    }
+}
+
+/* ==================== DROPDOWN (SUBMENÚ DE VERSIONES) ==================== */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.dropdown-menu {
+    position: absolute !important;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content; /* Se ajusta al contenido */
+    min-width: 100%; /* Asegura que tenga el ancho del botón */
+    z-index: 9999 !important; /* Superpone sobre otros elementos */
+    max-height: 250px;
+    overflow-y: auto;
+    text-align: center;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Asegurar que las opciones del menú no queden ocultas */
+.dropdown-menu.show {
+    display: block !important;
+}
+
+/* Evitar que se recorte dentro del contenedor */
+.category-card {
+    overflow: visible !important;
+}
+
+/* Ajuste para que las opciones sean visibles */
+.dropdown-menu a {
+    font-size: 14px;
+    color: #333;
+    padding: 10px 15px;
+    display: block;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+/* Mejorar visibilidad del hover */
+.dropdown-menu a:hover {
+    background-color: #000;
+    color: white;
+}
+
+/* Ajustar el botón desplegable */
+.btn.dropdown-toggle {
+    width: 100%;
+    text-align: center;
+}
+
+/* ==================== FOOTER (AHORA COINCIDE CON LA NAVBAR) ==================== */
+.footer {
+    background-color: #ffffff;
+    color: #333;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 14px;
+    margin-top: 40px;
+    border-top: 2px solid #ddd;
+}
+
+/* Estilos de los enlaces en el footer */
+.footer a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.footer a:hover {
+    color: #000;
+}
+
+/* Iconos del footer */
+.footer-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.footer-icons i {
+    font-size: 20px;
+    color: #666;
+    transition: color 0.3s ease-in-out;
+}
+
+.footer-icons i:hover {
+    color: #000;
+}
+
+/* ==================== BOTÓN FLOTANTE DE WHATSAPP ==================== */
+.btn-whatsapp {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    transition: right 0.3s ease-in-out;
+}
+
+.btn-whatsapp img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #25D366;
+}
+
+body {
+    padding-top: 100px;
+    overflow-y: auto; /* Evita que la página entera se desplace cuando el dropdown está abierto */
+}

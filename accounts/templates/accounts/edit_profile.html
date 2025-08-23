@@ -1,0 +1,45 @@
+{% extends "shop/base.html" %}
+{% block content %}
+<div class="container py-5">
+  <div class="row profile-grid">
+    <!-- Dirección -->
+    <div class="col-md-6">
+      <div class="profile-card">
+        <h4 class="card-title"><span class="accent"></span>Cambiar Dirección</h4>
+
+        <p class="mb-3">
+          <strong>Dirección actual:</strong>
+          {% if request.user.address %}
+            {{ request.user.address }}
+          {% else %}
+            No ingresada
+          {% endif %}
+        </p>
+
+        <form method="POST">
+          {% csrf_token %}
+          {{ address_form.as_p }}
+          <button type="submit" name="update_address" class="btn btn-primary">
+            Actualizar Dirección
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="col-md-6">
+      <div class="profile-card">
+        <h4 class="card-title"><span class="accent"></span>Cambiar Contraseña</h4>
+
+        <form method="POST">
+          {% csrf_token %}
+          {{ password_form.as_p }}
+          <button type="submit" name="update_password" class="btn btn-primary">
+            Actualizar Contraseña
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

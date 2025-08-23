@@ -1,0 +1,96 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+<div class="container d-flex justify-content-center mt-5">
+    <div class="form-container p-4 shadow-lg">
+        <h2 class="text-center fw-bold mb-4">Tu Carrito</h2>
+
+        {% if cart.items.all %}
+            <table class="table text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart.items.all %}
+                        <tr class="cart-item">
+                            <td class="product-name">{{ item.product.name }}</td>
+                            <td class="product-price">${{ item.product.price }}</td>
+                            <td>
+                                <form method="POST" action="{% url 'update_cart' item.id %}" class="d-flex justify-content-center">
+                                    {% csrf_token %}
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control w-50 text-center product-quantity">
+                                    <button type="submit" class="btn btn-primary btn-sm ms-2">Actualizar</button>
+                                </form>
+                            </td>
+                            <td class="product-total">${{ item.total_price }}</td>
+                            <td>
+                                <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="text-center mt-4">
+                <h4 class="fw-bold">Total: $<span id="cart-total">{{ cart.total_price }}</span></h4>
+
+                {% if vendedores %}
+                    <h4 class="mt-4">📲 Selecciona un vendedor para enviar tu pedido:</h4>
+
+                    {% for vendedor in vendedores %}
+                        <a href="#" class="btn btn-success w-100 mt-2 send-whatsapp"
+                           data-phone="{{ vendedor.telefono }}"
+                           data-nombre="{{ vendedor.nombre }}">
+                            📩 Enviar a {{ vendedor.nombre }}
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-center text-muted">No hay vendedores disponibles.</p>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="text-center">Tu carrito está vacío.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const botones = document.querySelectorAll(".send-whatsapp");
+
+        botones.forEach(boton => {
+            boton.addEventListener("click", function (event) {
+                event.preventDefault();
+
+                let phone = this.getAttribute("data-phone");
+                let vendedor = this.getAttribute("data-nombre");
+
+                // Obtener productos del carrito
+                let productos = [];
+                document.querySelectorAll(".cart-item").forEach(item => {
+                    let nombre = item.querySelector(".product-name").textContent.trim();
+                    let cantidad = item.querySelector(".product-quantity").value.trim();
+                    let precio = item.querySelector(".product-price").textContent.trim();
+                    productos.push(`- ${nombre} x${cantidad} - ${precio}`);
+                });
+
+                // Obtener el total del carrito
+                let total = document.getElementById("cart-total").textContent.trim();
+
+                // Mensaje de WhatsApp
+                let mensaje = `Hola ${vendedor}, quiero realizar un pedido:\n\n${productos.join("\n")}\n\nTotal: $${total}\n\n¡Espero tu respuesta!`;
+                let whatsappURL = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
+
+                // Redirigir a WhatsApp
+                window.open(whatsappURL, "_blank");
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Accesorios Disponibles</h2>
+
+    <form method="GET" class="row g-3">
+        <div class="col-md-4">
+            <label for="model" class="form-label">Modelo:</label>
+            <select name="model_id" id="model" class="form-select" onchange="this.form.submit()">
+                <option value="">Todos</option>
+                {% for model in models %}
+                    <option value="{{ model.id }}" {% if model.id == selected_model %}selected{% endif %}>{{ model.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="version" class="form-label">Versión:</label>
+            <select name="version_id" id="version" class="form-select" onchange="this.form.submit()">
+                <option value="">Todas</option>
+                {% for version in versions %}
+                    <option value="{{ version.id }}" {% if version.id == selected_version %}selected{% endif %}>{{ version.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    <div class="row mt-4">
+        {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">${{ product.price }}</p>
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center">No hay accesorios disponibles para esta selección.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

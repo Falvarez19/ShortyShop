@@ -1,0 +1,47 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Productos por Modelo</h2>
+
+    <!-- Dropdown para seleccionar modelo -->
+    <div class="text-center mb-4">
+        <div class="dropdown">
+            <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if selected_model %} {{ selected_model.name }} {% else %} Seleccionar Modelo {% endif %}
+            </button>
+            <ul class="dropdown-menu">
+                {% for model in models %}
+                    <li><a class="dropdown-item" href="{% url 'products' %}?model={{ model.id }}">{{ model.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Mostrar productos según el modelo seleccionado -->
+    <div class="row">
+        {% if products %}
+            {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top">
+                    {% else %}
+                        <img src="{% static 'img/default-image.png' %}" alt="Imagen no disponible" class="card-img-top">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.category }}</p>
+                        <p class="card-text text-success fw-bold">${{ product.price }}</p>
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-primary w-100">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center">No hay productos para este modelo.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

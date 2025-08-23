@@ -1,0 +1,31 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center min-vh-100 bg-light py-5">
+    <div class="register-card shadow p-4 rounded" style="max-width: 600px; width: 100%; background-color: #fff;">
+
+        <!-- Ícono según género -->
+        <div class="text-center mb-3">
+            {% if user.gender == "M" %}
+                <i class="bi bi-person-fill" style="font-size: 48px; color: #007bff;"></i>
+            {% elif user.gender == "F" %}
+                <i class="bi bi-person-fill" style="font-size: 48px; color: #e83e8c;"></i>
+            {% else %}
+                <i class="bi bi-person-circle" style="font-size: 48px; color: #6c757d;"></i>
+            {% endif %}
+        </div>
+
+        <h4 class="text-center mb-4">Hola, {{ user.first_name }} {{ user.last_name }}</h4>
+
+        <ul class="list-group list-group-flush mb-4">
+            <li class="list-group-item"><strong>📧 Correo:</strong> {{ user.email }}</li>
+            <li class="list-group-item"><strong>🎂 Fecha de nacimiento:</strong> {{ user.birth_date|default:"No ingresada" }}</li>
+            <li class="list-group-item"><strong>🏠 Dirección:</strong> {{ user.address|default:"No ingresada" }}</li>
+        </ul>
+
+        <div class="d-grid gap-2">
+            <a href="{% url 'edit_profile' %}" class="btn btn-dark">Cambiar Contraseña</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
