@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--e9sfplodz6xiug31j6m#!pw)jjp12*gqdyp8fnc+q$wo7ye=d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*","127.0.0.1", "localhost", "https://7478-181-82-92-55.ngrok-free.app",]
+ALLOWED_HOSTS = ["*","127.0.0.1", "localhost", "kowatz.pythonanywhere.com",]
 
 # Application definition
 INSTALLED_APPS = [
@@ -128,5 +128,5 @@ AUTH_USER_MODEL = 'accounts.CustomUser'  # Si tienes un modelo personalizado
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://7478-181-82-92-55.ngrok-free.app"
+    "https://kowatz.pythonanywhere.com"
 ]
