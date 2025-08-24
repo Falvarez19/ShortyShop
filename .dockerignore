@@ -1,0 +1,10 @@
+fly.toml
+.git/
+*.sqlite3
+.git
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+/media
+/staticfiles

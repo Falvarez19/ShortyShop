@@ -1,33 +1,30 @@
-# Usar Python 3.12 slim
-FROM python:3.12-slim
+ARG PYTHON_VERSION=3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    POETRY_VIRTUALENVS_CREATE=false
+FROM python:${PYTHON_VERSION}
 
-# Paquetes del sistema (psycopg2/whitenoise no necesitan mucho)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential curl ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Carpeta de la app
-WORKDIR /app
+# install psycopg2 dependencies.
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
 
-# Requisitos
-COPY requirements.txt /app/
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN mkdir -p /code
 
-# Copiar proyecto
-COPY . /app
+WORKDIR /code
 
-# Static (si falla en build no es crítico; también lo corremos en entrypoint)
-RUN python manage.py collectstatic --noinput || true
+COPY requirements.txt /tmp/requirements.txt
+RUN set -ex && \
+    pip install --upgrade pip && \
+    pip install -r /tmp/requirements.txt && \
+    rm -rf /root/.cache/
+COPY . /code
 
-# Puerto
-EXPOSE 8080
+ENV SECRET_KEY "8vk2mlcrIA2zJ4vLnvri0LSvFEwgwblscyRpaMI4njfRCqlBgq"
+RUN python manage.py collectstatic --noinput
 
-# Entrypoint (migra DB, collectstatic y levanta gunicorn)
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+EXPOSE 8000
 
-CMD ["/entrypoint.sh"]
+CMD ["gunicorn","--bind",":8000","--workers","2","ShortyShop.wsgi"]

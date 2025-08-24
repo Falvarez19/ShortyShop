@@ -20,12 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--e9sfplodz6xiug31j6m#!pw)jjp12*gqdyp8fnc+q$wo7ye=d'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-inseguro-no-usar")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*","127.0.0.1", "localhost", "https://ShortyShop.fly.dev",]
+ALLOWED_HOSTS = ["*","127.0.0.1", "localhost", "https://shortyshop.fly.dev",]
 
 # Application definition
 INSTALLED_APPS = [
@@ -128,5 +128,5 @@ AUTH_USER_MODEL = 'accounts.CustomUser'  # Si tienes un modelo personalizado
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://ShortyShop.fly.dev"
+    "https://shortyshop.fly.dev"
 ]
