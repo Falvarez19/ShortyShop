@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure--e9sfplodz6xiug31j6m#!pw)jjp12*gqdyp8fnc+q$wo7ye=d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*","127.0.0.1", "localhost", "kowatz.pythonanywhere.com",]
+ALLOWED_HOSTS = ["*","127.0.0.1", "localhost", "https://ShortyShop.fly.dev",]
 
 # Application definition
 INSTALLED_APPS = [
@@ -128,5 +128,5 @@ AUTH_USER_MODEL = 'accounts.CustomUser'  # Si tienes un modelo personalizado
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://kowatz.pythonanywhere.com"
+    "https://ShortyShop.fly.dev"
 ]

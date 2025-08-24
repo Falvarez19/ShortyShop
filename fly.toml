@@ -1,0 +1,6 @@
+[mounts]
+  source="data"
+  destination="/data"
+
+[env]
+  DB_DIR="/data"
