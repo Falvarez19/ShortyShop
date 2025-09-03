@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import  get_models ,mis_compras, products_by_category, products_by_brand ,en_construccion, about, cart_view, add_product, edit_product, delete_product, product_list, add_to_cart, remove_from_cart, update_cart,  product_detail, home, products_by_model
+from .views import  product_list_repuestos, product_list_accesorios, get_models ,mis_compras, products_by_category, products_by_brand ,en_construccion, about, cart_view, add_product, edit_product, delete_product, product_list, add_to_cart, remove_from_cart, update_cart,  product_detail, home, products_by_model
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -19,10 +19,10 @@ urlpatterns = [
     path("categoria/<str:category>/", products_by_category, name="products_by_category"),
     path('mis-compras/', mis_compras, name='mis_compras'),
     path('get-models/', get_models, name='get_models'),
-    
-    # Nueva ruta para categoría filtrada por modelo y versión
     path('construccion/', en_construccion, name='en_construccion'),
     path("products/", product_list, name="product_list"),
+    path("repuestos/", product_list_repuestos, name="repuestos"),
+    path("accesorios/", product_list_accesorios, name="accesorios"),
   
 ]
 

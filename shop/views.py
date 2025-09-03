@@ -2,9 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from django.contrib import messages
-from .models import BRAND_CHOICES
-
-# 👇 Importo también BRAND_CHOICES (constante global definida en models.py)
 from .models import Cart, CartItem, Product, ModelCar, BRAND_CHOICES
 from .forms import ProductForm
 
@@ -166,41 +163,53 @@ def delete_product(request, product_id):
     return render(request, "shop/delete_product.html", {"product": product})
 
 # Lista de productos filtrados por modelo
-def product_list(request):
+def product_list(request, category_label=None):
+    """Listado con filtros. Si category_label está presente, filtra por esa categoría."""
     model_id = request.GET.get('model')
     brand = request.GET.get('brand')
     sort = request.GET.get('sort')
 
     products = Product.objects.all()
 
+    # Filtrar por categoría si viene seteada (pestañas)
+    if category_label:
+        products = products.filter(category__iexact=category_label)
+
+    # Filtros de la barra lateral
     if brand:
         products = products.filter(marca=brand)
-
-    if model_id:
+    elif model_id:
         products = products.filter(compatible_models__id=model_id)
 
-    # Ordenamiento
+    # Orden
     if sort == 'price_asc':
         products = products.order_by('price')
     elif sort == 'price_desc':
         products = products.order_by('-price')
 
-    # Obtener modelos relacionados a la marca seleccionada
-    if brand:
-        models = ModelCar.objects.filter(product__marca=brand).distinct()
-    else:
-        models = ModelCar.objects.all().distinct()
+    # Modelos y marcas disponibles (acotadas por la categoría si corresponde)
+    models = ModelCar.objects.filter(product__in=products).distinct()
+    brands = (products.values_list('marca', flat=True).distinct().order_by('marca'))
 
-    brands = BRAND_CHOICES            # 👈 usa la constante global
+    # Etiqueta de título para el template
+    section = category_label or "Todos los Productos"
 
     return render(request, 'shop/product_list.html', {
         'products': products,
         'models': models,
-        'brands': brands,
+        'brands': [(b, b) for b in brands],  # si tu template espera (key,label)
         'selected_model': model_id,
         'selected_brand': brand,
         'selected_sort': sort,
+        'section': section,
     })
+
+# Wrappers para las pestañas
+def product_list_repuestos(request):
+    return product_list(request, category_label='Repuestos')
+
+def product_list_accesorios(request):
+    return product_list(request, category_label='Accesorios')
 
 #Lista de compras
 @login_required
@@ -263,3 +272,40 @@ def get_models(request):
         return JsonResponse([], safe=False)
     qs = ModelCar.objects.filter(marca__iexact=brand).order_by('name').values('id', 'name')
     return JsonResponse(list(qs), safe=False)
+
+#vista de accesorios
+def accessories(request):
+    brand = request.GET.get('brand')
+    model_id = request.GET.get('model')
+    sort = request.GET.get('sort')
+
+    products = Product.objects.filter(category__iexact='Accesorios', stock__gt=0)
+    if brand:
+        products = products.filter(marca=brand)
+    if model_id:
+        products = products.filter(compatible_models__id=model_id)
+    if sort == 'price_asc':
+        products = products.order_by('price')
+    elif sort == 'price_desc':
+        products = products.order_by('-price')
+
+    models = (ModelCar.objects
+              .filter(product__category__iexact='Accesorios')
+              .distinct())
+    if brand:
+        models = models.filter(product__marca=brand).distinct()
+
+    brands = (Product.objects
+              .filter(category__iexact='Accesorios')
+              .values_list('marca', flat=True)
+              .distinct().order_by('marca'))
+
+    return render(request, 'shop/product_list.html', {
+        'products': products,
+        'models': models,
+        'brands': brands,
+        'selected_model': model_id,
+        'selected_brand': brand,
+        'selected_sort': sort,
+        'section': 'Accesorios', 
+    })

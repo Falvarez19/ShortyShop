@@ -1,6 +1,5 @@
 /* ==================== FUENTE PERSONALIZADA ==================== */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
 html, body{ font-family:'Poppins',sans-serif; }
 
 /* ===================== TOKENS / PALETA ===================== */
@@ -126,9 +125,30 @@ html, body{ font-family:'Poppins',sans-serif; }
 .product-thumb{ width:120px; height:120px; object-fit:contain; }
 .results-badge{ background:var(--brand-neutral-100); border-radius:999px; padding:.25rem .6rem; font-weight:600; font-size:.85rem; }
 
+/* Hace que imagen + texto ocupen bien el espacio y NO empujen la botonera */
+.product-row > .d-flex:first-child{
+  flex: 1 1 auto;
+  min-width: 0; /* evita overflow del título y empujes raros */
+}
+
 /* Botonera de acciones en cards/listas */
 .action-buttons{ display:flex; gap:.5rem; flex-wrap:wrap; }
 .action-buttons .btn-action{ min-height:34px; }
+
+/* Alinear a la derecha y en una sola línea en desktop */
+@media (min-width: 768px){
+  .action-buttons{
+    margin-left: auto;   /* empuja a la derecha */
+    flex-wrap: nowrap;   /* no corta línea en desktop */
+  }
+}
+
+/* Evitar que los botones se encojan y salten de línea */
+.action-buttons .btn-action{
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 @media (max-width:576px){
   .action-buttons{ width:100%; }
   .action-buttons .btn-action{ flex:1 1 100%; justify-content:center; }
@@ -224,7 +244,6 @@ html, body{ font-family:'Poppins',sans-serif; }
 /* Encabezado centrado de "Modelos Compatibles" (si se usa) */
 .models-header{ display:flex; align-items:center; justify-content:center; gap:.5rem .75rem; flex-wrap:wrap; margin-bottom:.35rem; }
 .models-header label{ margin:0; font-weight:600; }
-
 .xsmall{ font-size:.8rem; }
 
 /* ==================== ABOUT (COMPACT) ==================== */
@@ -272,6 +291,8 @@ html, body{ font-family:'Poppins',sans-serif; }
   font-weight:800;
   margin-bottom:1rem;
 }
+
+/* Labels coherentes */
 .login-card .form-label,
 .register-card .form-label,
 .edit-product-card .form-label{
@@ -279,6 +300,7 @@ html, body{ font-family:'Poppins',sans-serif; }
   color:#344054;
   font-size:.92rem;
 }
+
 .login-card input[type="text"],
 .login-card input[type="email"],
 .login-card input[type="password"],
@@ -308,9 +330,11 @@ html, body{ font-family:'Poppins',sans-serif; }
 .login-card textarea,
 .register-card textarea,
 .edit-product-card textarea{ min-height:90px; height:auto; }
+
 .login-card input::placeholder,
 .register-card input::placeholder,
 .edit-product-card input::placeholder{ color:#98a2b3; }
+
 .login-card input:focus,
 .login-card select:focus,
 .login-card textarea:focus,
@@ -323,6 +347,8 @@ html, body{ font-family:'Poppins',sans-serif; }
   border-color:var(--brand-primary-700);
   box-shadow:0 0 0 .15rem rgba(13,110,253,.12);
 }
+
+/* Errores / ayuda */
 .login-card .errorlist,
 .register-card .errorlist,
 .edit-product-card .errorlist{
@@ -463,6 +489,7 @@ html, body{ font-family:'Poppins',sans-serif; }
 }
 .profile-card form{ display:flex; flex-direction:column; gap:.6rem; }
 .profile-card p{ margin:0; }
+
 .profile-card label{
   display:block; margin-bottom:.25rem; font-weight:700; color:#344054; font-size:.92rem;
 }
@@ -479,11 +506,13 @@ html, body{ font-family:'Poppins',sans-serif; }
   border-color:var(--brand-primary-700);
   box-shadow:0 0 0 .15rem rgba(13,110,253,.12);
 }
+
 .profile-card .errorlist{ list-style:none; margin:.35rem 0 0; padding:0; color:var(--brand-danger); font-size:.9rem; }
 .profile-card .form-text,
 .profile-card .helptext{ color:#667085; font-size:.9rem; }
 .profile-card ul{ margin:.35rem 0 .7rem 1.25rem; }
 .profile-card ul li{ margin:.2rem 0; }
+
 .profile-card .btn{
   padding:.38rem .75rem;
   border-radius:12px;
