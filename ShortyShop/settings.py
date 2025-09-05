@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-inseguro-no-usar")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-insecure-key-change-me")
+DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1,.up.railway.app"
+).split(",")
 
-ALLOWED_HOSTS = ["*","127.0.0.1", "localhost", "https://shortyshop.fly.dev",]
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS",
+    "https://*.up.railway.app"
+).split(",")
 
 # Application definition
 INSTALLED_APPS = [
@@ -42,6 +49,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware", 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -70,13 +78,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ShortyShop.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+DEFAULT_DB_URL = os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.config(
+        default=DEFAULT_DB_URL,
+        conn_max_age=600,
+        # Si usás la URL pública del plugin (no Private Network), en Variables poné DATABASE_SSL_REQUIRE=1
+        ssl_require=os.getenv("DATABASE_SSL_REQUIRE", "0") == "1",
+    )
 }
 
 # Password validation
@@ -104,12 +113,15 @@ NUMBER_GROUPING = 3
 
 # ⚡ Configuración de archivos estáticos y media ⚡
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = BASE_DIR / "media"
 
+if not DEBUG:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    
 # Asegurar que Django sirva archivos estáticos en desarrollo
 if DEBUG:
     import mimetypes
@@ -127,6 +139,8 @@ AUTHENTICATION_BACKENDS = [
 AUTH_USER_MODEL = 'accounts.CustomUser'  # Si tienes un modelo personalizado
 
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://shortyshop.fly.dev"
-]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # SECURE_SSL_REDIRECT = True  # (opcional)
