@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
 from django.contrib import messages
 from .models import Cart, CartItem, Product, ModelCar, BRAND_CHOICES
 from .forms import ProductForm
+from django.views.decorators.http import require_POST
+import json
+from django.urls import reverse
 
 
 # Página principal
@@ -309,3 +313,101 @@ def accessories(request):
         'selected_sort': sort,
         'section': 'Accesorios', 
     })
+
+
+
+
+# --- Panel Admin de Modelos ---
+@staff_member_required
+def admin_models(request):
+    filter_brand = request.GET.get("brand", "")
+    qs = ModelCar.objects.all().order_by("marca", "name")
+    if filter_brand:
+        qs = qs.filter(marca=filter_brand)
+
+    return render(request, "shop/admin_models.html", {
+        "brands": BRAND_CHOICES,        # lista para los selects
+        "selected_brand": filter_brand,
+        "models": qs,
+    })
+
+# --- API: listar (opcional si lo usas vía fetch) ---
+@staff_member_required
+def list_models(request):
+    brand = (request.GET.get("brand") or "").strip()
+    q = (request.GET.get("q") or "").strip()
+
+    qs = ModelCar.objects.all()
+    if brand:
+        qs = qs.filter(marca__iexact=brand)
+    if q:
+        qs = qs.filter(name__icontains=q)
+
+    data = [{"id": m.id, "name": m.name, "brand": m.marca} for m in qs.order_by("name")[:500]]
+    return JsonResponse({"ok": True, "results": data})
+
+# --- API: alta de modelo (deja **sólo esta**; elimina cualquier duplicada) ---
+
+@require_POST
+@staff_member_required
+def add_model(request):
+    # JSON (AJAX)
+    if request.content_type and "application/json" in request.content_type.lower():
+        try:
+            data = json.loads(request.body.decode("utf-8") or "{}")
+        except json.JSONDecodeError:
+            return JsonResponse({"ok": False, "error": "JSON inválido."}, status=400)
+        brand = (data.get("brand") or "").strip()
+        name  = (data.get("name") or "").strip()
+        if not brand or not name:
+            return JsonResponse({"ok": False, "error": "Faltan datos."}, status=400)
+        obj, created = ModelCar.objects.get_or_create(
+            marca__iexact=brand, name__iexact=name,
+            defaults={"marca": brand, "name": name}
+        )
+        return JsonResponse({"ok": True, "id": obj.id, "name": obj.name, "created": created})
+
+    # Form POST normal
+    brand = (request.POST.get("brand") or "").strip()
+    name  = (request.POST.get("name") or "").strip()
+    if not brand or not name:
+        messages.error(request, "Completá marca y nombre.")
+        return redirect(f"{reverse('admin_models')}?brand={brand}")
+
+    obj, created = ModelCar.objects.get_or_create(
+        marca__iexact=brand, name__iexact=name,
+        defaults={"marca": brand, "name": name}
+    )
+    if created:
+        messages.success(request, f"Modelo “{obj.name}” creado.")
+    else:
+        messages.info(request, f"El modelo “{obj.name}” ya existía.")
+
+    return redirect(f"{reverse('admin_models')}?brand={brand}")
+# --- API: borrar modelo ---
+@staff_member_required
+@require_POST
+def delete_model(request, pk):
+    """Borra un modelo desde el panel y vuelve con mensajes (sin JSON)."""
+    # preservar el filtro actual de marca si lo hubiera
+    brand_filter = request.GET.get("brand", "")
+
+    try:
+        m = ModelCar.objects.get(pk=pk)
+    except ModelCar.DoesNotExist:
+        messages.error(request, "El modelo ya no existe.")
+    else:
+        in_use = Product.objects.filter(compatible_models=m).count()
+        if in_use:
+            messages.error(
+                request,
+                f"No se puede eliminar: está en uso por {in_use} producto(s)."
+            )
+        else:
+            m.delete()
+            messages.success(request, "Modelo eliminado correctamente.")
+
+    url = reverse("admin_models")
+    if brand_filter:
+        url += f"?brand={brand_filter}"
+    return redirect(admin_models)

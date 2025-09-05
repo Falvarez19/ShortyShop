@@ -13,17 +13,20 @@ document.addEventListener("DOMContentLoaded", () => {
   })();
 
   // ---------- Add/Edit Product: dinámico de modelos ----------
-  const brandSelect = document.getElementById("id_marca");
-  const modelsContainer = document.getElementById("models-container");
-  const searchInput = document.getElementById("modelSearch");
-  const btnAll = document.getElementById("btnSelectAll");
-  const btnClear = document.getElementById("btnClearAll");
-  const countEl = document.getElementById("modelsCount");
+  const brandSelect      = document.getElementById("id_marca");
+  const modelsContainer  = document.getElementById("models-container");
+  const searchInput      = document.getElementById("modelSearch");
+  const btnAll           = document.getElementById("btnSelectAll");
+  const btnClear         = document.getElementById("btnClearAll");
+  const countSelectedEl  = document.getElementById("modelsCount"); // <span> o <strong>
+  const countTotalEl     = document.getElementById("modelsTotal"); // opcional
+  const newModelInput    = document.getElementById("newModelName");
+  const btnAddModel      = document.getElementById("btnAddModel");
 
-  // Vista previa de imagen (opcional)
-  const imageInput = document.getElementById("image");
+  // Vista previa de imagen
+  const imageInput       = document.getElementById("image");
   const imagePreviewWrap = document.getElementById("imagePreviewWrap");
-  const imagePreview = document.getElementById("imagePreview");
+  const imagePreview     = document.getElementById("imagePreview");
   if (imageInput && imagePreview && imagePreviewWrap) {
     imageInput.addEventListener("change", (e) => {
       const file = e.target.files?.[0];
@@ -43,38 +46,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!brandSelect || !modelsContainer) return;
 
-  const MODELS_API =
-    document.body?.dataset?.modelsApi || "/get-models/";
+  // Endpoints (pueden venir por data-* del <body>)
+  const MODELS_API    = document.body?.dataset?.modelsApi    || "/get-models/";
+  const ADD_MODEL_API = document.body?.dataset?.addModelApi  || "/api/models/add/";
 
+  // ---- CSRF (Django) ----
+  function getCookie(name) {
+    const m = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
+    return m ? decodeURIComponent(m.pop()) : null;
+  }
+  const getCSRFToken = () => getCookie("csrftoken");
+
+  // ---- Helpers selección/contador/búsqueda ----
   function getSelectedIdsFromDataset() {
     const raw = (modelsContainer.dataset.selected || "").trim();
     if (!raw) return new Set();
     return new Set(
-      raw
-        .split(",")
-        .map((s) => s.trim())
-        .filter((s) => s.length)
+      raw.split(",").map((s) => s.trim()).filter(Boolean)
     );
   }
 
   function updateCount() {
-    if (!countEl) return;
     const total = modelsContainer.querySelectorAll(
       '.form-check-input[type="checkbox"]'
     ).length;
     const checked = modelsContainer.querySelectorAll(
       '.form-check-input[type="checkbox"]:checked'
     ).length;
-    countEl.textContent = `Sel: ${checked} seleccionados · ${total} totales`;
+
+    if (countSelectedEl && !countTotalEl) {
+      countSelectedEl.textContent = `Sel: ${checked} seleccionados · ${total} totales`;
+    }
+    if (countSelectedEl && countTotalEl) {
+      countSelectedEl.textContent = String(checked);
+      countTotalEl.textContent    = String(total);
+    }
   }
 
   function applySearch() {
     if (!searchInput) return;
     const q = searchInput.value.trim().toLowerCase();
-    const items = modelsContainer.querySelectorAll(".form-check");
-    items.forEach((row) => {
-      const label = row.querySelector(".form-check-label");
-      const text = (label?.textContent || "").toLowerCase();
+    modelsContainer.querySelectorAll(".form-check").forEach((row) => {
+      const text = (row.querySelector(".form-check-label")?.textContent || "").toLowerCase();
       row.style.display = q && !text.includes(q) ? "none" : "";
     });
   }
@@ -84,66 +97,96 @@ document.addEventListener("DOMContentLoaded", () => {
     if (selected.size === 0) return;
     modelsContainer
       .querySelectorAll('.form-check-input[type="checkbox"]')
-      .forEach((c) => {
-        if (selected.has(String(c.value))) c.checked = true;
-      });
+      .forEach((c) => { if (selected.has(String(c.value))) c.checked = true; });
+  }
+
+  function createCheckbox(model) {
+    const wrap = document.createElement("div");
+    wrap.className = "form-check";
+    wrap.innerHTML = `
+      <input class="form-check-input" type="checkbox" id="mdl_${model.id}"
+             name="compatible_models" value="${model.id}">
+      <label class="form-check-label" for="mdl_${model.id}">${model.name}</label>`;
+    return wrap;
   }
 
   function renderModels(list) {
     if (!Array.isArray(list) || list.length === 0) {
-      modelsContainer.innerHTML =
-        '<small class="text-muted">No hay modelos para esta marca.</small>';
+      modelsContainer.innerHTML = '<small class="text-muted">No hay modelos para esta marca.</small>';
       updateCount();
       return;
     }
-    const html = list
-      .map(
-        (m) => `
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="mdl_${m.id}" name="compatible_models" value="${m.id}">
-        <label class="form-check-label" for="mdl_${m.id}">${m.name}</label>
-      </div>`
-      )
-      .join("");
-    modelsContainer.innerHTML = html;
-    preselectFromDataset(); // marcar los ya asociados
+    const frag = document.createDocumentFragment();
+    list.forEach((m) => frag.appendChild(createCheckbox(m)));
+    modelsContainer.innerHTML = "";
+    modelsContainer.appendChild(frag);
+    preselectFromDataset();
     applySearch();
     updateCount();
   }
 
   async function fetchModels(brand) {
     if (!brand) {
-      modelsContainer.innerHTML =
-        '<small class="text-muted">Elegí primero la Marca del Auto.</small>';
+      modelsContainer.innerHTML = '<small class="text-muted">Elegí primero la Marca del Auto.</small>';
       updateCount();
       return;
     }
     try {
       const url = `${MODELS_API}?brand=${encodeURIComponent(brand)}`;
-      const res = await fetch(url, { headers: { "X-Requested-With": "fetch" } });
+      const res = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json(); // [{id, name}, ...]
       renderModels(data);
     } catch (err) {
       console.error("Error trayendo modelos:", err);
-      modelsContainer.innerHTML =
-        '<small class="text-danger">No se pudieron cargar los modelos.</small>';
+      modelsContainer.innerHTML = '<small class="text-danger">No se pudieron cargar los modelos.</small>';
       updateCount();
     }
   }
 
-  // Eventos
-  brandSelect.addEventListener("change", (e) => {
-    fetchModels(e.target.value);
-  });
+  // ---- Agregar modelo "al vuelo" ----
+  async function addNewModel() {
+    const brand = brandSelect.value;
+    const name  = (newModelInput?.value || "").trim();
+    if (!brand) { alert("Elegí primero una marca."); return; }
+    if (!name)  return;
+
+    try {
+      const res = await fetch(ADD_MODEL_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-CSRFToken": getCSRFToken() || ""
+        },
+        body: JSON.stringify({ name, brand })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const created = await res.json(); // {id, name}
+      if (!created || !created.id || !created.name) {
+        console.warn("Respuesta inesperada al crear modelo:", created);
+        return;
+      }
+      const node = createCheckbox(created);
+      modelsContainer.appendChild(node);
+      node.querySelector('input[type="checkbox"]').checked = true;
+      newModelInput.value = "";
+      applySearch();
+      updateCount();
+    } catch (err) {
+      console.error("Error creando modelo:", err);
+      alert("No se pudo crear el modelo. Intentalo de nuevo.");
+    }
+  }
+
+  // ---- Eventos ----
+  brandSelect.addEventListener("change", (e) => fetchModels(e.target.value));
 
   modelsContainer.addEventListener("change", (e) => {
     if (e.target.matches('.form-check-input[type="checkbox"]')) updateCount();
   });
 
-  if (searchInput) {
-    searchInput.addEventListener("input", applySearch);
-  }
+  if (searchInput) searchInput.addEventListener("input", applySearch);
 
   if (btnAll) {
     btnAll.addEventListener("click", () => {
@@ -163,10 +206,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Estado inicial (si ya había marca/checkboxes renderizados del servidor)
-  if (brandSelect.value) fetchModels(brandSelect.value);
-  else {
-    preselectFromDataset();
-    updateCount();
+  if (btnAddModel && newModelInput) {
+    btnAddModel.addEventListener("click", addNewModel);
+    newModelInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); addNewModel(); }
+    });
   }
+
+  // Estado inicial
+  if (brandSelect.value) fetchModels(brandSelect.value);
+  else { preselectFromDataset(); updateCount(); }
 });

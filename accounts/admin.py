@@ -15,7 +15,7 @@ class CustomUserAdmin(UserAdmin):
         (None, {"fields": ("email", "first_name", "last_name", "birth_date", "password1", "password2")}),
     )
 
-    ordering = ['email']  # 👈 Cambiar 'username' por 'email'
+    ordering = ['email'] 
 
 
 admin.site.register(CustomUser, CustomUserAdmin)

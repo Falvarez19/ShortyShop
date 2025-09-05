@@ -2,138 +2,147 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShortyShop</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'shop/css/style.css' %}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShortyShop</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'shop/css/style.css' %}">
 </head>
 
-<body>
-    <body data-models-api="{% url 'get_models' %}">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white py-2">
-        <div class="container d-flex align-items-center">
-            <!-- Logo -->
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <img src="{% static 'shop/images/logo.png' %}" alt="ShortyShop" class="navbar-logo">
-            </a>
+<!-- ✅ un solo body con el data-models-api -->
+<body data-models-api="{% url 'get_models' %}">
 
-            <!-- Botón de colapso en móviles -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white py-2">
+    <div class="container d-flex align-items-center">
+      <!-- Logo -->
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <img src="{% static 'shop/images/logo.png' %}" alt="ShortyShop" class="navbar-logo">
+      </a>
+
+      <!-- Botón de colapso en móviles -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Menú principal -->
+      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/repuestos/' %}active{% endif %}"
+               href="{% url 'repuestos' %}">Repuestos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/accesorios/' %}active{% endif %}"
+               href="{% url 'accesorios' %}">Accesorios</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'about' %}">Sobre Nosotros</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Usuario y Carrito -->
+      <div class="d-flex align-items-center">
+        {% if user.is_authenticated %}
+          <div class="dropdown me-3">
+            <button class="dropdown-toggle d-flex align-items-center border-0 bg-transparent nav-link"
+                    id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i>
+              {{ user.first_name|default:user.email }}
             </button>
 
-            <!-- Menú principal -->
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/repuestos/' %}active{% endif %}"
-                            href="{% url 'repuestos' %}">Repuestos</a>
-                    </li>
-                    <li class="nav-item">
-                         <a class="nav-link {% if request.path == '/accesorios/' %}active{% endif %}"
-                            href="{% url 'accesorios' %}">Accesorios</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'about' %}">Sobre Nosotros</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Usuario y Carrito -->
-            <div class="d-flex align-items-center">
-                {% if user.is_authenticated %}
-                <div class="dropdown me-3">
-                    <button class="dropdown-toggle d-flex align-items-center border-0 bg-transparent nav-link" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle me-1"></i>
-                        {{ user.first_name|default:user.email }}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        {% if user.is_staff %}
-                        <li class="dropdown-submenu position-relative">
-                            <a class="dropdown-item dropdown-toggle" href="#">⚙️ Panel Admin</a>
-                            <ul class="dropdown-menu sub-menu">
-                                <li><a class="dropdown-item" href="{% url 'add_product' %}">➕ Agregar Producto</a></li>
-                                <li><a class="dropdown-item" href="{% url 'product_list' %}">📋 Ver Lista de Productos</a></li>
-                            </ul>
-                        </li>
-                        {% endif %}
-                        <li><a class="dropdown-item" href="{% url 'mis_compras' %}">🛍️ Mis Compras</a></li>
-                        <li><a class="dropdown-item" href="{% url 'profile' %}">👤 Perfil</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
-                    </ul>
-                </div>
-                {% else %}
-                <div class="nav-item dropdown me-3 login-dropdown" data-bs-auto-close="outside">
-                <a class="nav-link dropdown-toggle text-dark" href="#" id="loginDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Iniciar Sesión
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              {% if user.is_staff %}
+                <li class="dropdown-submenu position-relative">
+                  <a class="dropdown-item dropdown-toggle" href="#">⚙️ Panel Admin</a>
+                  <ul class="dropdown-menu sub-menu">
+                    <li><a class="dropdown-item" href="{% url 'add_product' %}">➕ Agregar Producto</a></li>
+                    <li><a class="dropdown-item" href="{% url 'product_list' %}">📋 Ver Lista de Productos</a></li>
+                    <!-- ✅ nuevo: enlace a gestionar modelos -->
+                    <li><a class="dropdown-item" href="{% url 'admin_models' %}">🚗 Gestionar Modelos</a></li>
+                  </ul>
+                </li>
+              {% endif %}
+              <li><a class="dropdown-item" href="{% url 'mis_compras' %}">🛍️ Mis Compras</a></li>
+              <li><a class="dropdown-item" href="{% url 'profile' %}">👤 Perfil</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                  <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
                 </a>
+              </li>
+            </ul>
+          </div>
+        {% else %}
+          <div class="nav-item dropdown me-3 login-dropdown" data-bs-auto-close="outside">
+            <a class="nav-link dropdown-toggle text-dark" href="#" id="loginDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              Iniciar Sesión
+            </a>
 
-                <div class="dropdown-menu dropdown-menu-end p-4 shadow login-menu" aria-labelledby="loginDropdown">
-                    <h6 class="fw-bold mb-3 text-center">Iniciar Sesión</h6>
-                    <form method="POST" action="{% url 'login' %}" autocomplete="off">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.path }}">
-
-                    <div class="mb-3">
-                        <label for="email" class="form-label mb-1">Correo</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="password" class="form-label mb-1">Contraseña</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
-                    </form>
-
-                    <div class="text-center mt-3">
-                    <a href="{% url 'register' %}" class="register-link fw-semibold text-decoration-none">Regístrate aquí</a>
-                    </div>
+            <div class="dropdown-menu dropdown-menu-end p-4 shadow login-menu" aria-labelledby="loginDropdown">
+              <h6 class="fw-bold mb-3 text-center">Iniciar Sesión</h6>
+              <form method="POST" action="{% url 'login' %}" autocomplete="off">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <div class="mb-3">
+                  <label for="email" class="form-label mb-1">Correo</label>
+                  <input type="email" class="form-control" id="email" name="email" required>
                 </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label mb-1">Contraseña</label>
+                  <input type="password" class="form-control" id="password" name="password" required>
                 </div>
-                {% endif %}
-                <a class="nav-link text-dark position-relative d-flex align-items-center" href="{% url 'cart' %}">
-                    <i class="bi bi-cart"></i>
-                </a>
+                <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+              </form>
+              <div class="text-center mt-3">
+                <a href="{% url 'register' %}" class="register-link fw-semibold text-decoration-none">Regístrate aquí</a>
+              </div>
             </div>
-        </div>
-    </nav>
+          </div>
+        {% endif %}
 
-    <!-- Contenido principal -->
-    <div class="container-fluid d-flex flex-column min-vh-100 pt-5">
-        <main class="flex-grow-1">
-            {% block content %}
-            {% endblock %}
-        </main>
-    </div>
-
-    <!-- Botón flotante de WhatsApp -->
-    <div class="btn-whatsapp">
-        <a href="https://wa.me/1234567890" target="_blank">
-            <img src="{% static 'shop/images/whatsapp-icon.png' %}" alt="WhatsApp">
+        <a class="nav-link text-dark position-relative d-flex align-items-center" href="{% url 'cart' %}">
+          <i class="bi bi-cart"></i>
         </a>
+      </div>
     </div>
+  </nav>
 
-    <!-- Footer -->
-    <footer class="footer bg-white text-dark text-center py-3">
-        <div class="container">
-            <p>© 2025 ShortyShop. Todos los derechos reservados.</p>
-            <div class="footer-icons">
-                <a href="https://www.facebook.com/ "><i class="bi bi-facebook"></i></a>
-                <a href="https://www.instagram.com/ "><i class="bi bi-instagram"></i></a>
-            </div>
-        </div>
-    </footer>
-    <script src="{% static 'shop/js/script.js' %}"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Contenido principal -->
+  <div class="container-fluid d-flex flex-column min-vh-100 pt-5 page-wrap">
+    <main class="flex-grow-1">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- Botón flotante de WhatsApp -->
+  <div class="btn-whatsapp">
+    <a href="https://wa.me/1234567890" target="_blank">
+      <img src="{% static 'shop/images/whatsapp-icon.png' %}" alt="WhatsApp">
+    </a>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer bg-white text-dark text-center py-3">
+    <div class="container">
+      <p>© 2025 ShortyShop. Todos los derechos reservados.</p>
+      <div class="footer-icons">
+        <a href="https://www.facebook.com/ "><i class="bi bi-facebook"></i></a>
+        <a href="https://www.instagram.com/ "><i class="bi bi-instagram"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Tu JS -->
+  <script src="{% static 'shop/js/script.js' %}"></script>
 </body>
 </html>

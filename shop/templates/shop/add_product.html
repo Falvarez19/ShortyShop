@@ -86,15 +86,26 @@
             <div class="col-12">
               <div class="models-header">
                 <label class="form-label small m-0">Modelos Compatibles</label>
-                <div class="models-toolbar">
+
+                <!-- Toolbar de modelos: buscar, seleccionar/limpiar, NUEVO MODELO y contadores -->
+                <div class="models-toolbar w-100">
                   <input type="text" id="modelSearch" class="form-control form-control-sm" placeholder="Buscar…">
                   <button type="button" class="btn btn-sm btn-outline-secondary" id="btnSelectAll">Todos</button>
                   <button type="button" class="btn btn-sm btn-outline-secondary" id="btnClearAll">Limpiar</button>
-                  <span class="ms-1 xsmall text-muted">Sel: <strong id="modelsCount">0</strong></span>
+
+                  <!-- NUEVO: crear modelo al vuelo -->
+                  <div class="ms-auto d-flex gap-2 align-items-center">
+                    <input id="newModelName" type="text" class="form-control form-control-sm" placeholder="Nuevo modelo…">
+                    <button type="button" id="btnAddModel" class="btn btn-sm btn-primary">+ Añadir</button>
+                  </div>
+
+                  <span id="modelsCountWrap" class="xsmall ms-2">
+                    Sel: <strong id="modelsCount">0</strong> • <span id="modelsTotal">0</span> totales
+                  </span>
                 </div>
               </div>
 
-              <div id="models-container" class="models-scroll">
+              <div id="models-container" class="models-scroll mt-2">
                 <small class="text-muted">Elegí primero la Marca del Auto.</small>
               </div>
             </div>
