@@ -4,7 +4,7 @@
    - DJANGO_SECRET_KEY (clave larga)
    - DJANGO_DEBUG=0
    - ALLOWED_HOSTS=tuapp.up.railway.app,localhost,127.0.0.1
-   - CSRF_TRUSTED_ORIGINS=https://tuapp.up.railway.app,https://*.up.railway.app
+   - CSRF_TRUSTED_ORIGINS=web-production-60f6.up.railway.app
    - PYTHONUNBUFFERED=1
    - PYTHONDONTWRITEBYTECODE=1
 
