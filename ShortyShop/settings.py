@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'shop',
     'accounts',
+    'cloudinary',
+    'cloudinary_storage'
 ]
 
 MIDDLEWARE = [
@@ -121,7 +123,13 @@ MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", "/data/media"))
 MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
 
 if not DEBUG:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+    CLOUDINARY_STORAGE = {
+        "CLOUD_NAME": os.getenv("dzp0vq4q8"),
+        "API_KEY": os.getenv("992595198362585"),
+        "API_SECRET": os.getenv("ZNYyLr-Tr2Vg3--yPkRSQ0kz0yM"),
+    }
+
 
 # Asegurar que Django sirva archivos estáticos en desarrollo
 if DEBUG:
