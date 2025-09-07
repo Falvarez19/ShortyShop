@@ -26,9 +26,10 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top" loading="lazy">
                     {% else %}
-                        <img src="{% static 'img/default-image.png' %}" alt="Imagen no disponible" class="card-img-top">
+                        {# usa el placeholder REAL que tengas en static/shop/images/ #}
+                        <img src="{% static 'shop/images/placeholder.jpg' %}" alt="Imagen no disponible" class="card-img-top" loading="lazy">
                     {% endif %}
                     <div class="card-body">
                         <h5 class="card-title">{{ product.name }}</h5>
