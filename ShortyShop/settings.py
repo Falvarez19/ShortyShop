@@ -37,12 +37,12 @@ CSRF_TRUSTED_ORIGINS = os.getenv(
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
-    'cloudinary',
-    'cloudinary_storage'
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary',
+    'cloudinary_storage'
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'shop',
