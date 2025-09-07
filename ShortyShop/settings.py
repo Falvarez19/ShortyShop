@@ -37,6 +37,8 @@ CSRF_TRUSTED_ORIGINS = os.getenv(
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'cloudinary',
+    'cloudinary_storage'
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -45,8 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'shop',
     'accounts',
-    'cloudinary',
-    'cloudinary_storage'
+    
 ]
 
 MIDDLEWARE = [
@@ -125,13 +126,15 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 if not DEBUG:
-    # En producción: sube media a Cloudinary
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+    # Usa la URL única si la tienes
+    CLOUDINARY_URL = os.getenv("CLOUDINARY_URL")
+    # (Si prefieres las 3 vars separadas, usa esto en su lugar)
     CLOUDINARY_STORAGE = {
         "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME"),
         "API_KEY": os.getenv("CLOUDINARY_API_KEY"),
-        "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
-    }
+        "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"), }
+    
 # Asegurar que Django sirva archivos estáticos en desarrollo
 if DEBUG:
     import mimetypes
