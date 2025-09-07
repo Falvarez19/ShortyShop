@@ -125,14 +125,13 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 if not DEBUG:
+    # En producción: sube media a Cloudinary
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
     CLOUDINARY_STORAGE = {
-        "CLOUD_NAME": os.getenv("dzp0vq4q8"),
-        "API_KEY": os.getenv("992595198362585"),
-        "API_SECRET": os.getenv("ZNYyLr-Tr2Vg3--yPkRSQ0kz0yM"),
+        "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME"),
+        "API_KEY": os.getenv("CLOUDINARY_API_KEY"),
+        "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
     }
-
-
 # Asegurar que Django sirva archivos estáticos en desarrollo
 if DEBUG:
     import mimetypes
