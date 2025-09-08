@@ -196,48 +196,63 @@ def delete_product(request, product_id):
     return render(request, "shop/delete_product.html", {"product": product})
 
 # Lista de productos filtrados por modelo
+from django.shortcuts import render
+from .models import Product, ModelCar
+
 def product_list(request, category_label=None):
-    """Listado con filtros. Si category_label está presente, filtra por esa categoría."""
-    model_id = request.GET.get('model')
-    brand = request.GET.get('brand')
-    sort = request.GET.get('sort')
+    brand    = request.GET.get('brand', '') or ''
+    model_id = request.GET.get('model', '') or ''
+    sort     = request.GET.get('sort', 'price_asc') or 'price_asc'
 
-    products = Product.objects.all()
-
-    # Filtrar por categoría si viene seteada (pestañas)
+    # 1) Base: sólo categoría (para pestañas)
+    base_qs = Product.objects.all()
     if category_label:
-        products = products.filter(category__iexact=category_label)
+        base_qs = base_qs.filter(category__iexact=category_label)
 
-    # Filtros de la barra lateral
+    # 2) Facetas (NO usar el queryset ya filtrado por marca/modelo)
+    #    Marcas presentes en la categoría (si hay)
+    brands_in_db = base_qs.values_list('marca', flat=True).distinct()
+    brands = [(b, b) for b in brands_in_db]
+
+    #    Modelos: si hay marca elegida, modelos de esa marca en la categoría;
+    #    si no, todos los modelos de la categoría.
+    if brand:
+        models = (ModelCar.objects
+                  .filter(marca=brand, product__in=base_qs)
+                  .distinct().order_by('name'))
+    else:
+        models = (ModelCar.objects
+                  .filter(product__in=base_qs)
+                  .distinct().order_by('name'))
+
+    # 3) Ahora sí, aplicar filtros activos sobre una copia del base_qs
+    products = base_qs
     if brand:
         products = products.filter(marca=brand)
-    elif model_id:
+    if model_id:
         products = products.filter(compatible_models__id=model_id)
 
-    # Orden
-    if sort == 'price_asc':
-        products = products.order_by('price')
-    elif sort == 'price_desc':
+    # 4) Orden
+    if sort == 'price_desc':
         products = products.order_by('-price')
+    elif sort == 'price_asc':
+        products = products.order_by('price')
+    else:
+        # por si agregás más criterios
+        products = products.order_by('name')
 
-    # Modelos y marcas disponibles (acotadas por la categoría si corresponde)
-    models = ModelCar.objects.filter(product__in=products).distinct()
-    brands = (products.values_list('marca', flat=True).distinct().order_by('marca'))
-
-    # Etiqueta de título para el template
     section = category_label or "Todos los Productos"
 
     return render(request, 'shop/product_list.html', {
         'products': products,
-        'models': models,
-        'brands': [(b, b) for b in brands],  # si tu template espera (key,label)
+        'models': models,                # <- el template ya usa 'models'
+        'brands': brands,                # [(value, label)]
         'selected_model': model_id,
         'selected_brand': brand,
         'selected_sort': sort,
         'section': section,
     })
 
-# Wrappers para las pestañas
 def product_list_repuestos(request):
     return product_list(request, category_label='Repuestos')
 
