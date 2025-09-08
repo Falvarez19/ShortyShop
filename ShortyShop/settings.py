@@ -1,7 +1,7 @@
 # ShortyShop/settings.py
 from pathlib import Path
 import os
-import dj_database_url   # ← FALTABA ESTE IMPORT
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +24,8 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",     # WhiteNoise usa esta
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",
     "shop",
     "accounts",
 ]
@@ -42,6 +43,26 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "ShortyShop.urls"
+# --- Templates ---
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        # carpeta global de plantillas del proyecto
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,  # <- importante para cargar plantillas de cada app
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "shop.context_processors.cart_counter",
+            ],
+        },
+    },
+]
+
+
 WSGI_APPLICATION = "ShortyShop.wsgi.application"
 
 # --- Base de datos: usa /data/db.sqlite3 si no hay DATABASE_URL ---
@@ -58,15 +79,15 @@ TIME_ZONE = "America/Argentina/Buenos_Aires"
 USE_I18N = True
 USE_TZ = True
 
-# --- Static (WhiteNoise) ---
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# --- Media (volumen en Fly: /data/media) ---
+
+# MEDIA (nuevo)
 MEDIA_URL = "/media/"
-MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", "/data/media" if not DEBUG else BASE_DIR / "media"))
+MEDIA_ROOT = "/data/media"
 
 # --- Dev helper (mimes) ---
 if DEBUG:

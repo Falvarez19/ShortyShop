@@ -14,8 +14,8 @@
   <link rel="stylesheet" href="{% static 'shop/css/style.css' %}">
 </head>
 
-<!-- ✅ un solo body con el data-models-api -->
-<body data-models-api="{% url 'get_models' %}">
+{% url 'get_models' as models_api_url %}
+<body data-models-api="{{ models_api_url|default:'#' }}">
 
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white py-2">
@@ -45,75 +45,83 @@
             <a class="nav-link" href="{% url 'about' %}">Sobre Nosotros</a>
           </li>
         </ul>
-      </div>
 
-      <!-- Usuario y Carrito -->
-      <div class="d-flex align-items-center">
-        {% if user.is_authenticated %}
-          <div class="dropdown me-3">
-            <button class="dropdown-toggle d-flex align-items-center border-0 bg-transparent nav-link"
-                    id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="bi bi-person-circle me-1"></i>
-              {{ user.first_name|default:user.email }}
-            </button>
+        <!-- Usuario y Carrito -->
+        <div class="d-flex align-items-center">
+          {% if user.is_authenticated %}
+            <div class="dropdown me-3">
+              <button class="dropdown-toggle d-flex align-items-center border-0 bg-transparent nav-link"
+                      id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle me-1"></i>
+                {{ user.first_name|default:user.email }}
+              </button>
 
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-              {% if user.is_staff %}
-                <li class="dropdown-submenu position-relative">
-                  <a class="dropdown-item dropdown-toggle" href="#">⚙️ Panel Admin</a>
-                  <ul class="dropdown-menu sub-menu">
-                    <li><a class="dropdown-item" href="{% url 'add_product' %}">➕ Agregar Producto</a></li>
-                    <li><a class="dropdown-item" href="{% url 'product_list' %}">📋 Ver Lista de Productos</a></li>
-                    <!-- ✅ nuevo: enlace a gestionar modelos -->
-                    <li><a class="dropdown-item" href="{% url 'admin_models' %}">🚗 Gestionar Modelos</a></li>
-                  </ul>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                {% if user.is_staff %}
+                  <li class="dropdown-submenu position-relative">
+                    <a class="dropdown-item dropdown-toggle" href="#">⚙️ Panel Admin</a>
+                    <ul class="dropdown-menu sub-menu">
+                      <li><a class="dropdown-item" href="{% url 'add_product' %}">➕ Agregar Producto</a></li>
+                      <li><a class="dropdown-item" href="{% url 'product_list' %}">📋 Ver Lista de Productos</a></li>
+                      {% url 'admin_models' as admin_models_url %}
+                      <li><a class="dropdown-item" href="{{ admin_models_url|default:'#' }}">🚗 Gestionar Modelos</a></li>
+                    </ul>
+                  </li>
+                {% endif %}
+                <li><a class="dropdown-item" href="{% url 'mis_compras' %}">🛍️ Mis Compras</a></li>
+                <li><a class="dropdown-item" href="{% url 'profile' %}">👤 Perfil</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                  </a>
                 </li>
-              {% endif %}
-              <li><a class="dropdown-item" href="{% url 'mis_compras' %}">🛍️ Mis Compras</a></li>
-              <li><a class="dropdown-item" href="{% url 'profile' %}">👤 Perfil</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li>
-                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-                  <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
-                </a>
-              </li>
-            </ul>
-          </div>
-        {% else %}
-          <div class="nav-item dropdown me-3 login-dropdown" data-bs-auto-close="outside">
-            <a class="nav-link dropdown-toggle text-dark" href="#" id="loginDropdown" role="button"
-               data-bs-toggle="dropdown" aria-expanded="false">
-              Iniciar Sesión
-            </a>
+              </ul>
+            </div>
+          {% else %}
+            <div class="nav-item dropdown me-3 login-dropdown" data-bs-auto-close="outside">
+              <a class="nav-link dropdown-toggle text-dark" href="#" id="loginDropdown" role="button"
+                 data-bs-toggle="dropdown" aria-expanded="false">
+                Iniciar Sesión
+              </a>
 
-            <div class="dropdown-menu dropdown-menu-end p-4 shadow login-menu" aria-labelledby="loginDropdown">
-              <h6 class="fw-bold mb-3 text-center">Iniciar Sesión</h6>
-              <form method="POST" action="{% url 'login' %}" autocomplete="off">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.path }}">
-                <div class="mb-3">
-                  <label for="email" class="form-label mb-1">Correo</label>
-                  <input type="email" class="form-control" id="email" name="email" required>
+              <div class="dropdown-menu dropdown-menu-end p-4 shadow login-menu" aria-labelledby="loginDropdown">
+                <h6 class="fw-bold mb-3 text-center">Iniciar Sesión</h6>
+                <form method="POST" action="{% url 'login' %}" autocomplete="off">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.path }}">
+                  <div class="mb-3">
+                    <label for="email" class="form-label mb-1">Correo</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="password" class="form-label mb-1">Contraseña</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+                </form>
+                <div class="text-center mt-3">
+                  <a href="{% url 'register' %}" class="register-link fw-semibold text-decoration-none">Regístrate aquí</a>
                 </div>
-                <div class="mb-3">
-                  <label for="password" class="form-label mb-1">Contraseña</label>
-                  <input type="password" class="form-control" id="password" name="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
-              </form>
-              <div class="text-center mt-3">
-                <a href="{% url 'register' %}" class="register-link fw-semibold text-decoration-none">Regístrate aquí</a>
               </div>
             </div>
-          </div>
-        {% endif %}
+          {% endif %}
 
-        <a class="nav-link text-dark position-relative d-flex align-items-center" href="{% url 'cart' %}">
-          <i class="bi bi-cart"></i>
-        </a>
-      </div>
-    </div>
+          {% url 'cart' as cart_url %}
+            <a class="nav-link text-dark position-relative d-flex align-items-center"
+              href="{{ cart_url|default:'#' }}" aria-label="Carrito">
+              <i class="bi bi-cart"></i>
+              {% if cart_count|default:0 > 0 %}
+                <span id="cartBadge" class="cart-badge">{{ cart_count }}</span>
+              {% endif %}
+          </a>
+        </div>
+      </div> <!-- /navbar-collapse -->
+    </div> <!-- /container -->
   </nav>
+
+  <!-- Overlay para menú móvil -->
+  <div class="nav-backdrop"></div>
 
   <!-- Contenido principal -->
   <div class="container-fluid d-flex flex-column min-vh-100 pt-5 page-wrap">

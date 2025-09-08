@@ -6,6 +6,8 @@ from django.contrib import messages
 from .models import Cart, CartItem, Product, ModelCar, BRAND_CHOICES
 from .forms import ProductForm
 from django.views.decorators.http import require_POST
+from django.db.models import F
+from django.utils.http import url_has_allowed_host_and_scheme
 import json
 from django.urls import reverse
 
@@ -62,17 +64,33 @@ def cart_view(request):
     return render(request, "shop/cart.html", {"cart": cart, "vendedores": vendedores})
 
 # Agregar un producto al carrito
+
 @login_required
+@require_POST
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart, _ = Cart.objects.get_or_create(user=request.user)
 
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-    if not created:
-        cart_item.quantity += 1
-        cart_item.save()
+    # Acepta "quantity" o "qty" (por compatibilidad)
+    try:
+        qty = int(request.POST.get("quantity") or request.POST.get("qty") or 1)
+    except ValueError:
+        qty = 1
+    qty = max(qty, 1)
 
-    return redirect('cart')
+    item, created = CartItem.objects.get_or_create(cart=cart, product=product, defaults={"quantity": 0})
+    item.quantity = (item.quantity or 0) + qty
+    item.save()
+
+    messages.success(request, f"“{product.name}” agregado al carrito.")
+
+    # Volver a donde estábamos
+    next_url = (
+        request.POST.get("next")
+        or request.META.get("HTTP_REFERER")
+        or reverse("product_detail", args=[product_id])
+    )
+    return redirect(next_url)
 
 # Eliminar un producto del carrito
 @login_required
@@ -92,6 +110,17 @@ def update_cart(request, item_id):
         cart_item.save()
 
     return redirect("cart")
+
+
+
+def cart_counter(request):
+    count = 0
+    if request.user.is_authenticated:
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+        # Usa el related_name que tengas; si no definiste, es cartitem_set
+        qs = getattr(cart, "items", getattr(cart, "cartitem_set"))
+        count = qs.aggregate(total=Sum("quantity"))["total"] or 0
+    return {"cart_count": count}
 
 # Validar si el usuario es administrador
 def is_admin(user):
@@ -315,18 +344,23 @@ def accessories(request):
     })
 
 
-
-
 # --- Panel Admin de Modelos ---
 @staff_member_required
 def admin_models(request):
+    if request.method == "POST":
+        brand = request.POST.get("brand")
+        name  = (request.POST.get("name") or "").strip()
+        if brand and name:
+            ModelCar.objects.get_or_create(marca=brand, name=name)
+        return redirect(f"{reverse('admin_models')}?brand={brand or ''}")
+
     filter_brand = request.GET.get("brand", "")
     qs = ModelCar.objects.all().order_by("marca", "name")
     if filter_brand:
         qs = qs.filter(marca=filter_brand)
 
     return render(request, "shop/admin_models.html", {
-        "brands": BRAND_CHOICES,        # lista para los selects
+        "brands": BRAND_CHOICES,
         "selected_brand": filter_brand,
         "models": qs,
     })

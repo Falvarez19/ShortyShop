@@ -1,7 +1,8 @@
 {% extends "shop/base.html" %}
 {% load static %}
-
+{% load humanize %}
 {% block content %}
+
 <!-- Slider Principal (full-bleed) -->
 <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-indicators">
@@ -40,22 +41,44 @@
   {% endfor %}
 </div>
 
-<!-- Lo más vendido -->
-<div class="container mt-5">
-  <h3 class="text-center mb-4">🔥 Lo más vendido</h3>
-  <div class="row">
-    {% for producto in best_sellers %}
-      <div class="col-md-3 mb-4">
-        <div class="product-card">
-          <img src="{{ producto.image.url }}" class="img-fluid" alt="{{ producto.name }}">
-          <h6 class="mt-2">{{ producto.name }}</h6>
-          <p class="text-success fw-bold">${{ producto.price }}</p>
-          <a href="{% url 'product_detail' producto.id %}" class="btn btn-sm btn-outline-primary">Ver más</a>
+<!-- Lo más vendido (cards) -->
+<section class="container my-4">
+  <h2 class="section-title justify-content-center">
+    <span class="accent"></span> Lo más vendido
+  </h2>
+
+  <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+    {% for p in best_sellers %}
+      <div class="col">
+        <div class="best-card h-100 p-3 d-flex flex-column">
+          <a href="{% url 'product_detail' p.id %}"
+             class="text-decoration-none text-reset d-flex flex-column align-items-center">
+            {% static 'shop/images/placeholder.png' as ph %}
+            {% if p.image %}
+              <img class="best-img mb-2" src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy">
+            {% else %}
+              <img class="best-img mb-2" src="{{ ph }}" alt="{{ p.name }}" loading="lazy">
+            {% endif %}
+            <h3 class="best-title fw-semibold text-center mb-1">
+              {{ p.name|truncatechars:80 }}
+            </h3>
+          </a>
+
+          <div class="mt-auto text-center">
+            <div class="price-main mb-2">
+              ${{ p.price|floatformat:0|intcomma }}
+            </div>
+            <a href="{% url 'product_detail' p.id %}" class="btn btn-primary btn-sm">
+              Ver más
+            </a>
+          </div>
         </div>
       </div>
+    {% empty %}
+      <p class="text-muted">Aún no hay productos destacados.</p>
     {% endfor %}
   </div>
-</div>
+</section>
 
 <!-- Servicios -->
 <div class="container mt-5 py-4 bg-light rounded">
@@ -70,4 +93,5 @@
     </div>
   </div>
 </div>
+
 {% endblock %}

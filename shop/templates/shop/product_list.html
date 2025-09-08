@@ -67,7 +67,12 @@
                   <img src="https://via.placeholder.com/120" alt="Sin imagen" class="product-thumb">
                 {% endif %}
                 <div>
-                  <h5 class="mb-1">{{ product.name }}</h5>
+                  <!-- Título clickeable -->
+                  <h5 class="m-0 product-title">
+                    <a href="{% url 'product_detail' product.id %}" class="text-decoration-none">
+                      {{ product.name }}
+                    </a>
+                  </h5>
                   <p class="mb-1 text-muted">{{ product.category }} — {{ product.marca }}</p>
                   <!-- Precio con puntos de miles -->
                   <p class="text-success fw-bold mb-1">
@@ -78,7 +83,7 @@
 
               <!-- Botones de acción -->
               <div class="action-buttons mt-3 mt-md-0">
-                <!-- Ver detalles -->
+                <!-- Ver detalles (opcional, podés quitarlo si ya no lo querés) -->
                 <a href="{% url 'product_detail' product.id %}" class="btn-action btn-detail btn-action-xs">
                   <i class="bi bi-eye"></i> Ver detalles
                 </a>
