@@ -628,3 +628,27 @@ html, body{ font-family:'Poppins',sans-serif; }
   line-height:0;
   margin:0;
 }
+/* Acciones de la navbar (login + carrito) */
+.nav-actions .nav-link{ padding:.45rem .65rem; }
+
+/* En móviles, que quede prolijo cuando el menú colapsa */
+@media (max-width: 991.98px){
+  .nav-actions{ margin-top:.5rem; }
+}
+
+/* Centrado absoluto del menú principal en escritorio */
+@media (min-width: 992px){
+  .navbar { position: relative; } /* ya lo tenías, lo reafirmo */
+  .navbar .navbar-center{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 18px;           /* separación entre items */
+  }
+}
+
+/* Ajuste suave de acciones a la derecha */
+.nav-actions .nav-link{
+  padding: .45rem .65rem;
+}
