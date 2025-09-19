@@ -1,13 +1,22 @@
-// --- ShortyShop UI helpers + Modelos por marca ---
-document.addEventListener("DOMContentLoaded", () => {
-  // Util CSRF (disponible para todos los bloques)
+/* ===========================
+   ShortyShop - JS principal
+   =========================== */
+
+/* --- CSRF helper GLOBAL --- */
+(function () {
   function getCookie(name) {
     const m = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
     return m ? decodeURIComponent(m.pop()) : null;
   }
-  const getCSRFToken = () => getCookie("csrftoken");
+  // Disponible en todo el archivo
+  window.getCSRFToken = function () {
+    return getCookie("csrftoken");
+  };
+})();
 
-  // Navbar scroll efecto
+/* --- Todo lo demás cuando el DOM esté listo --- */
+document.addEventListener("DOMContentLoaded", () => {
+  /* Navbar scroll efecto */
   (function () {
     const navbar = document.querySelector(".navbar");
     if (!navbar) return;
@@ -19,7 +28,19 @@ document.addEventListener("DOMContentLoaded", () => {
     onScroll();
   })();
 
-  // Vista previa de imagen (alta/edición de producto)
+  /* Overlay para menú móvil (clase body.menu-open) */
+  (function () {
+    const navCollapse = document.getElementById("navbarNav");
+    if (!navCollapse) return;
+    navCollapse.addEventListener("show.bs.collapse", () => {
+      document.body.classList.add("menu-open");
+    });
+    navCollapse.addEventListener("hide.bs.collapse", () => {
+      document.body.classList.remove("menu-open");
+    });
+  })();
+
+  /* Vista previa de imagen (alta/edición de producto) */
   (function () {
     const imageInput       = document.getElementById("image");
     const imagePreviewWrap = document.getElementById("imagePreviewWrap");
@@ -42,21 +63,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   })();
 
-  // ===== Alta de modelo (progresiva y con fallback seguro) =====
+  /* ===== Alta de modelo (progresiva y con fallback seguro) ===== */
   (function () {
     const addForm     = document.getElementById("addForm");
     const newBrandSel = document.getElementById("newBrand");
     const newModelInp = document.getElementById("newModel");
     if (!addForm) return;
 
-    // Si querés AJAX, agregá en <body data-add-model-api="...">
+    // Si querés AJAX, poné en <body data-add-model-api="/api/models/add/">
     const ADD_MODEL_API = document.body?.dataset?.addModelApi || "";
 
     addForm.addEventListener("submit", async (e) => {
       // Sin API -> dejamos que Django procese el POST normalmente
       if (!ADD_MODEL_API) return;
 
-      // Con API -> interceptamos y probamos vía fetch
+      // Con API -> interceptar y usar fetch
       e.preventDefault();
 
       const brand = newBrandSel?.value || "";
@@ -73,13 +94,13 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: {
             "Content-Type": "application/json",
             "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCSRFToken() || ""
+            "X-CSRFToken": window.getCSRFToken() || ""
           },
           body: JSON.stringify({ brand, name })
         });
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        // Éxito: recargamos para ver el nuevo registro en la tabla
+        // Éxito: recargar para ver el nuevo registro
         window.location.reload();
       } catch (err) {
         console.error("Fallo el alta por API, hago fallback al submit normal:", err);
@@ -88,15 +109,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   })();
 
-  // ---------- Add/Edit Product: dinámico de modelos ----------
+  /* ---------- Add/Edit Product: dinámico de modelos ---------- */
   (function () {
     const brandSelect     = document.getElementById("id_marca");
     const modelsContainer = document.getElementById("models-container");
     if (!(brandSelect && modelsContainer)) return; // sólo en la página de producto
 
     const searchInput     = document.getElementById("modelSearch");
-    const btnAll          = document.getElementById("btnSelectAll");
-    const btnClear        = document.getElementById("btnClearAll");
     const countSelectedEl = document.getElementById("modelsCount"); // <span>/<strong>
     const countTotalEl    = document.getElementById("modelsTotal"); // opcional
     const newModelInput   = document.getElementById("newModelName");
@@ -106,7 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const MODELS_API    = document.body?.dataset?.modelsApi   || "/get-models/";
     const ADD_MODEL_API = document.body?.dataset?.addModelApi || "/api/models/add/";
 
-    // ---- Helpers selección/contador/búsqueda ----
     function getSelectedIdsFromDataset() {
       const raw = (modelsContainer.dataset.selected || "").trim();
       if (!raw) return new Set();
@@ -191,7 +209,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // ---- Agregar modelo "al vuelo" (desde el formulario de producto) ----
     async function addNewModel() {
       const brand = brandSelect.value;
       const name  = (newModelInput?.value || "").trim();
@@ -204,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: {
             "Content-Type": "application/json",
             "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCSRFToken() || ""
+            "X-CSRFToken": window.getCSRFToken() || ""
           },
           body: JSON.stringify({ name, brand })
         });
@@ -226,18 +243,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // ---- Eventos ----
     brandSelect.addEventListener("change", (e) => fetchModels(e.target.value));
-
     modelsContainer.addEventListener("change", (e) => {
       if (e.target.matches('.form-check-input[type="checkbox"]')) updateCount();
     });
-
     if (searchInput) searchInput.addEventListener("input", applySearch);
 
     const btnAllEl   = document.getElementById("btnSelectAll");
     const btnClearEl = document.getElementById("btnClearAll");
-
     if (btnAllEl) {
       btnAllEl.addEventListener("click", () => {
         modelsContainer
@@ -246,7 +259,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateCount();
       });
     }
-
     if (btnClearEl) {
       btnClearEl.addEventListener("click", () => {
         modelsContainer
@@ -255,7 +267,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateCount();
       });
     }
-
     if (btnAddModel && newModelInput) {
       btnAddModel.addEventListener("click", addNewModel);
       newModelInput.addEventListener("keydown", (e) => {
@@ -267,15 +278,70 @@ document.addEventListener("DOMContentLoaded", () => {
     if (brandSelect.value) fetchModels(brandSelect.value);
     else { preselectFromDataset(); updateCount(); }
   })();
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const navCollapse = document.getElementById("navbarNav"); // el ID que ya usas
-  if (!navCollapse) return;
 
-  navCollapse.addEventListener("show.bs.collapse", () => {
-    document.body.classList.add("menu-open");
-  });
-  navCollapse.addEventListener("hide.bs.collapse", () => {
-    document.body.classList.remove("menu-open");
-  });
+  /* === Carrito: auto-actualizar cantidad al cambiar el input === */
+  (function () {
+    const rows = document.querySelectorAll("tr.cart-item");
+    if (!rows.length) return; // no estamos en la página del carrito
+
+    const fmt = (n) => {
+      try {
+        return new Intl.NumberFormat("es-AR", {
+          style: "currency",
+          currency: "ARS",
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(n);
+      } catch (_) {
+        return "$" + Math.round(Number(n) || 0).toLocaleString("es-AR");
+      }
+    };
+
+    rows.forEach((row) => {
+      const form   = row.querySelector("form");
+      const qtyInp = row.querySelector(".product-quantity");
+      const btn    = form?.querySelector('button[type="submit"]');
+
+      // Ocultar el botón "Actualizar" si hay JS
+      if (btn) btn.classList.add("d-none");
+
+      const doUpdate = async () => {
+        if (!(form && qtyInp)) return;
+        const url = form.action;
+        const body = new URLSearchParams({ quantity: qtyInp.value });
+
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+              "X-CSRFToken": window.getCSRFToken() || "",
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body,
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const data = await res.json();
+
+          // Actualizar total de la fila
+          const lineTotalEl = row.querySelector(".product-total");
+          if (lineTotalEl) lineTotalEl.textContent = fmt(data.item_total);
+
+          // Actualizar total del carrito
+          const cartTotalEl = document.getElementById("cart-total");
+          if (cartTotalEl) cartTotalEl.textContent = fmt(data.cart_total);
+
+          // Actualizar badge del carrito (si existe)
+          const badge = document.getElementById("cartBadge");
+          if (badge) badge.textContent = data.cart_count;
+        } catch (err) {
+          console.error("Error actualizando carrito:", err);
+        }
+      };
+
+      ["input", "change"].forEach((ev) =>
+        qtyInp?.addEventListener(ev, doUpdate)
+      );
+    });
+  })();
 });
