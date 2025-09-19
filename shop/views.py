@@ -101,17 +101,35 @@ def remove_from_cart(request, item_id):
 
 # Actualizar cantidad en el carrito
 @login_required
+@require_POST
 def update_cart(request, item_id):
-    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
 
-    if request.method == "POST":
-        quantity = request.POST.get("quantity")
-        cart_item.quantity = int(quantity) if quantity.isdigit() and int(quantity) > 0 else 1
-        cart_item.save()
+    # Sanitizar cantidad
+    try:
+        qty = int(request.POST.get("quantity", 1))
+    except (TypeError, ValueError):
+        qty = 1
+    qty = max(1, qty)
 
+    item.quantity = qty
+    item.save()
+
+    cart = item.cart
+    cart_total = sum(ci.product.price * ci.quantity for ci in cart.items.all())
+    cart_count = sum(ci.quantity for ci in cart.items.all())
+
+    # Si viene de fetch() (X-Requested-With), respondemos JSON y no recargamos
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({
+            "item_id": item.id,
+            "item_total": float(item.product.price * item.quantity),
+            "cart_total": float(cart_total),
+            "cart_count": cart_count,
+        })
+
+    # Fallback para submits normales
     return redirect("cart")
-
-
 
 def cart_counter(request):
     count = 0
