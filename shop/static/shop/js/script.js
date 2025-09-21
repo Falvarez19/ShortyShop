@@ -345,3 +345,43 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   })();
 });
+
+/* === THEME TOGGLER (Dark/Light) ============================================ */
+(function () {
+  const key = "theme";
+  const root = document.documentElement;
+  const btn = document.getElementById("themeToggle");
+
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    try { localStorage.setItem(key, t); } catch (e) {}
+    updateIcon(t);
+  }
+  function getTheme() {
+    return root.getAttribute("data-theme") || "light";
+  }
+  function updateIcon(t) {
+    if (!btn) return;
+    const ico = btn.querySelector("i");
+    if (!ico) return;
+    // sol para dark (porque alterna a light), luna para light
+    ico.className = (t === "dark") ? "bi bi-sun" : "bi bi-moon";
+  }
+
+  // Init (por si cambió por otro script)
+  updateIcon(getTheme());
+
+  // Click
+  btn && btn.addEventListener("click", () => {
+    const next = getTheme() === "dark" ? "light" : "dark";
+    setTheme(next);
+  });
+
+  // (Opcional) seguir al sistema si el user no eligió manualmente.
+  /*
+  if (!localStorage.getItem(key) && window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => setTheme(e.matches ? "dark" : "light"));
+  }
+  */
+})();
