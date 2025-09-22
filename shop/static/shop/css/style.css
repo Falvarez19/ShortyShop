@@ -152,7 +152,6 @@ html, body{ font-family:'Poppins',sans-serif; }
 .product-card img{ width:100%; max-height:150px; object-fit:contain; margin-bottom:10px; }
 
 /* ==================== LISTADO DE PRODUCTOS ==================== */
-@media (min-width:992px){ .filters-sticky{ position:sticky; top:calc(var(--nav-h) + 20px); } }
 .sidebar .form-check{ margin-bottom:.4rem; }
 .sidebar .form-check-input:checked + .form-check-label{ font-weight:700; color:var(--brand-primary-700); }
 
@@ -161,13 +160,31 @@ html, body{ font-family:'Poppins',sans-serif; }
   box-shadow:0 1px 3px rgba(16,24,40,.04);
   transition:border-color .18s ease, box-shadow .18s ease;
   padding:1rem 1.25rem;
+
+  /* alineado */
+  display:flex; align-items:center; gap:16px;
 }
 .product-row:hover{ border-color:var(--brand-primary-200); box-shadow:0 4px 12px rgba(16,24,40,.06); }
+
 .product-thumb{ width:120px; height:120px; object-fit:contain; }
 .results-badge{ background:var(--brand-neutral-100); border-radius:999px; padding:.28rem .68rem; font-weight:600; font-size:.9rem; }
 
-/* evita overflow del título y empujes raros */
-.product-row > .d-flex:first-child{ flex: 1 1 auto; min-width: 0; }
+/* evita overflow del título y empujes raros + alineado */
+.product-row > .d-flex:first-child{
+  flex:1 1 auto; min-width:0;
+  align-items:center; gap:16px;
+}
+
+/* Botonera de acciones */
+.action-buttons{ display:flex; gap:.6rem; flex-wrap:wrap; }
+.action-buttons .btn-action{ min-height:38px; white-space:nowrap; flex-shrink:0; }
+@media (min-width: 768px){
+  .action-buttons{ margin-left:auto; flex-wrap:nowrap; }
+}
+@media (max-width:576px){
+  .action-buttons{ width:100%; }
+  .action-buttons .btn-action{ flex:1 1 100%; justify-content:center; }
+}
 
 /* ==================== BOTONES ==================== */
 .btn, .btn-action{
@@ -196,15 +213,15 @@ html, body{ font-family:'Poppins',sans-serif; }
 .btn-danger, .btn-delete{ background: var(--brand-danger); border-color: var(--brand-danger); color:#fff; }
 .btn-danger:hover, .btn-delete:hover{ background:var(--brand-danger-600); border-color:var(--brand-danger-600); transform: translateY(-1px); }
 
-/* Botonera de acciones */
-.action-buttons{ display:flex; gap:.6rem; flex-wrap:wrap; }
-.action-buttons .btn-action{ min-height:38px; white-space:nowrap; flex-shrink:0; }
-@media (min-width: 768px){
-  .action-buttons{ margin-left:auto; flex-wrap:nowrap; }
-}
-@media (max-width:576px){
-  .action-buttons{ width:100%; }
-  .action-buttons .btn-action{ flex:1 1 100%; justify-content:center; }
+/* Variantes rápidas para alinear alto de botones en la fila */
+.product-row .action-buttons{ margin-left:auto; display:flex; align-items:center; gap:.6rem; }
+.product-row .action-buttons .btn,
+.product-row .action-buttons .btn-action,
+.product-row .action-buttons .btn-blue,
+.product-row .action-buttons .btn-detail,
+.product-row .action-buttons .btn-edit,
+.product-row .action-buttons .btn-delete{
+  height:40px; display:inline-flex; align-items:center; padding:0 14px; line-height:1;
 }
 
 /* Variantes rápidas */
@@ -545,13 +562,11 @@ html, body{ font-family:'Poppins',sans-serif; }
 /* ===================================================================== */
 /* =====================   DARK MODE (data-theme=dark)   ================= */
 /* ===================================================================== */
-
 :root[data-theme="dark"]{
-  /* Paleta gris neutro */
-  --bg-body:        #0f1115;   /* fondo general */
-  --bg-navbar:      #0b0d12;   /* navbar más oscuro */
-  --bg-elevated:    #151821;   /* cards/paneles */
-  --bg-surface:     #1b1f2a;   /* superficies internas (filas/listas) */
+  --bg-body:        #0f1115;
+  --bg-navbar:      #0b0d12;
+  --bg-elevated:    #151821;
+  --bg-surface:     #1b1f2a;
   --bg-footer:      #151821;
 
   --border-soft:    #2a303b;
@@ -559,7 +574,6 @@ html, body{ font-family:'Poppins',sans-serif; }
   --text-on-dark:   #e6e7eb;
   --muted-on-dark:  #9aa3b2;
 
-  /* Ajustamos neutrales para utilitarios */
   --brand-neutral-900:#e6e7eb;
   --brand-neutral-700:#cdd3df;
   --brand-neutral-500:#9aa3b2;
@@ -569,10 +583,7 @@ html, body{ font-family:'Poppins',sans-serif; }
 }
 
 /* Fondo + texto */
-:root[data-theme="dark"] body{
-  background: var(--bg-body) !important;
-  color: var(--text-on-dark);
-}
+:root[data-theme="dark"] body{ background: var(--bg-body) !important; color: var(--text-on-dark); }
 
 /* NAVBAR + toggler */
 :root[data-theme="dark"] .navbar,
@@ -674,7 +685,7 @@ html, body{ font-family:'Poppins',sans-serif; }
   border-color: var(--brand-primary) !important;
 }
 
-/* Botones que quedaban “claros” en login/registro */
+/* Botones que quedaban “claros” */
 :root[data-theme="dark"] .login-card .btn-primary,
 :root[data-theme="dark"] .register-card .btn-primary,
 :root[data-theme="dark"] .edit-product-card .btn-primary,
@@ -740,7 +751,7 @@ html, body{ font-family:'Poppins',sans-serif; }
 :root[data-theme="dark"] .text-dark{ color: var(--text-on-dark) !important; }
 :root[data-theme="dark"] .nav-backdrop{ background: rgba(0,0,0,.55); }
 
-/* Carrusel en dark (indicadores/flechas) */
+/* Carrusel en dark */
 :root[data-theme="dark"] #heroCarousel .carousel-indicators [data-bs-target]{
   background: rgba(255,255,255,.55); border-color: rgba(255,255,255,.25);
 }
@@ -750,13 +761,12 @@ html, body{ font-family:'Poppins',sans-serif; }
   filter: invert(1) drop-shadow(0 0 2px rgba(0,0,0,.4));
 }
 
-/* Detalle visual: botón WhatsApp */
+/* Botón WhatsApp en dark */
 :root[data-theme="dark"] .btn-whatsapp img{ filter:drop-shadow(0 0 2px rgba(0,0,0,.5)); }
 
 /* ===================================================================== */
 /* ===================== EXTRAS PARA MATAR FONDOS CLAROS =============== */
 /* ===================================================================== */
-
 :root[data-theme="dark"] .bg-white,
 :root[data-theme="dark"] .bg-light,
 :root[data-theme="dark"] .bg-body,
@@ -765,21 +775,18 @@ html, body{ font-family:'Poppins',sans-serif; }
   background: var(--bg-elevated) !important;
   color: var(--text-on-dark) !important;
 }
-
 :root[data-theme="dark"] .list-group,
 :root[data-theme="dark"] .list-group-item{
   background: var(--bg-surface) !important;
   color: var(--text-on-dark) !important;
   border-color: var(--border-soft) !important;
 }
-
-/* Contenedor de modelos que quedaba claro */
+/* Contenedor de modelos */
 :root[data-theme="dark"] .models-scroll{
   background: var(--bg-surface) !important;
   border-color: var(--border-soft) !important;
 }
-
-/* Inputs dentro de input-group */
+/* Inputs en input-group */
 :root[data-theme="dark"] .input-group .form-control,
 :root[data-theme="dark"] .input-group .form-select,
 :root[data-theme="dark"] .input-group-text{
@@ -787,7 +794,6 @@ html, body{ font-family:'Poppins',sans-serif; }
   color: var(--text-on-dark) !important;
   border-color: var(--border-soft) !important;
 }
-
 /* HR y utilitarios de borde */
 :root[data-theme="dark"] hr,
 :root[data-theme="dark"] .border,
@@ -795,26 +801,21 @@ html, body{ font-family:'Poppins',sans-serif; }
 :root[data-theme="dark"] .border-bottom{
   border-color: var(--border-soft) !important;
 }
-
 /* Ajustes de tablas por defecto */
 :root[data-theme="dark"] .table td,
-:root[data-theme="dark"] .table th{
-  background: transparent !important;
-}
+:root[data-theme="dark"] .table th{ background: transparent !important; }
 :root[data-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > *{
   background: rgba(255,255,255,.03) !important;
 }
 :root[data-theme="dark"] .table-hover > tbody > tr:hover > *{
   background: rgba(255,255,255,.06) !important;
 }
-
 /* Botón primario con sombra en dark */
 :root[data-theme="dark"] .btn-primary{
   box-shadow: 0 2px 10px rgba(13,110,253,.22) !important;
 }
 
-/* ===== Sidebar de filtros bien diferenciado (con acento) ===== */
-/* Sobrescribe reglas previas del .sidebar */
+/* ===== Sidebar con estilo y acento ===== */
 .sidebar{
   position: relative;
   background: linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
@@ -822,9 +823,10 @@ html, body{ font-family:'Poppins',sans-serif; }
   border-radius: var(--radius-lg);
   padding: 16px 18px;
   box-shadow: 0 12px 30px rgba(16,24,40,.08);
-}
 
-/* Acento lateral visual */
+  /* Para que el acento no “se salga” por defecto */
+  overflow:hidden;
+}
 .sidebar::before{
   content:"";
   position:absolute;
@@ -832,15 +834,11 @@ html, body{ font-family:'Poppins',sans-serif; }
   width:4px; border-radius:6px;
   background: linear-gradient(180deg,#0d6efd,#7aa8ff);
 }
-
-/* Separadores entre bloques (Marcas/Modelos/Ordenar) */
 .sidebar .filters-section + .filters-section{
   border-top:1px dashed #e6eaf0;
   margin-top:12px;
   padding-top:12px;
 }
-
-/* Hover suave e inputs del panel */
 .sidebar .form-check{
   margin:.4rem 0;
   padding:.35rem .45rem;
@@ -848,12 +846,11 @@ html, body{ font-family:'Poppins',sans-serif; }
 }
 .sidebar .form-check:hover{ background:#f6f9ff; }
 .sidebar .form-select{ height:40px; }
-
 @media (max-width: 991.98px){
   .sidebar{ margin-bottom:16px; }
 }
 
-/* ===== Dark mode del sidebar ===== */
+/* Dark del sidebar + acento */
 :root[data-theme="dark"] .sidebar{
   background: #151821 !important;
   border-color: var(--border-soft) !important;
@@ -868,4 +865,68 @@ html, body{ font-family:'Poppins',sans-serif; }
 }
 :root[data-theme="dark"] .sidebar .form-check:hover{
   background: rgba(255,255,255,.05);
+}
+
+/* ======================= PATCH MERGE ======================= */
+/* 1) Home/Servicios: matar fondos claros en dark */
+:root[data-theme="dark"] .home-services,
+:root[data-theme="dark"] .services-card,
+:root[data-theme="dark"] .services-section,
+:root[data-theme="dark"] .services-cta{
+  background: var(--bg-elevated) !important;
+  border-color: var(--border-soft) !important;
+  color: var(--text-on-dark) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,.22) !important;
+}
+:root[data-theme="dark"] .home-services .lead,
+:root[data-theme="dark"] .services-card .lead{
+  color: var(--muted-on-dark) !important;
+}
+/* 2) Logos circulares */
+:root[data-theme="dark"] .brand-item img{
+  background:#10151d !important;
+  border-color:#2a303b !important;
+  box-shadow:0 2px 8px rgba(0,0,0,.35) !important;
+  filter:saturate(90%);
+}
+:root[data-theme="dark"] .brand-item:hover img{
+  border-color:#3b82f6 !important;
+  box-shadow:0 4px 12px rgba(59,130,246,.22) !important;
+}
+:root[data-theme="dark"] .brand-item span{ color:var(--muted-on-dark) !important; }
+/* 3) Sidebar: que el acento no “se salga” */
+.sidebar::before{ left:1px; }
+:root[data-theme="dark"] .sidebar::before{ width:3px; opacity:.35; }
+/* 4) “Lo más vendido” hover coherente en dark */
+:root[data-theme="dark"] .best-card:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,.28) !important;
+}
+
+/* =================== ALINEADO LISTA DE PRODUCTOS =================== */
+/* (ya aplicado arriba en .product-row y .action-buttons) */
+
+/* ===================================================================== */
+/* =================== FIX: Sidebar sticky NO invade footer ============ */
+/* ===================================================================== */
+
+/* 1) Separación visual sobre el footer */
+.sidebar{ margin-bottom: 28px; }
+
+/* 2) En desktop: anulamos sticky en el contenedor y lo aplicamos al panel */
+@media (min-width: 992px){
+  /* Si antes la columna tenía sticky, lo apagamos */
+  .filters-sticky{ position: static !important; }
+
+  /* Sticky en el panel con tope de altura + scroll interno */
+  .filters-sticky .sidebar,
+  .sidebar{
+    position: sticky;
+    top: calc(var(--nav-h, 65px) + 20px);
+    max-height: calc(100vh - var(--nav-h, 65px) - 40px);
+    overflow: auto;                /* sobreescribe el overflow:hidden del acento */
+  }
+
+  /* Evita que la columna izquierda se estire por el alto del contenido derecho */
+  .row .col-lg-3{ align-self: flex-start; }
 }
