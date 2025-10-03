@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-insecure-key-change-me")
 DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
 
 ALLOWED_HOSTS = os.getenv(
-    "ALLOWED_HOSTS", "localhost,127.0.0.1,.fly.dev"
+    "ALLOWED_HOSTS", "localhost, 127.0.0.1, .fly.dev"
 ).split(",")
 
 CSRF_TRUSTED_ORIGINS = os.getenv(
@@ -78,6 +78,9 @@ LANGUAGE_CODE = "es-ar"
 TIME_ZONE = "America/Argentina/Buenos_Aires"
 USE_I18N = True
 USE_TZ = True
+THOUSAND_SEPARATOR = "."
+DECIMAL_SEPARATOR = ","
+NUMBER_GROUPING = 3
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"

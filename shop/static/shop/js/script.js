@@ -385,3 +385,64 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   */
 })();
+
+/* === Carrito: envío por WhatsApp ========================================= */
+(function () {
+  // Formatea moneda con separadores de miles (ARS). Si falla, cae a un formato simple.
+  const money = (n) => {
+    try {
+      return new Intl.NumberFormat("es-AR", {
+        style: "currency",
+        currency: "ARS",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(Number(n) || 0);
+    } catch {
+      return "$" + (Number(n) || 0).toLocaleString("es-AR");
+    }
+  };
+
+  // Construye las líneas de productos a partir de la tabla del carrito
+  function collectCartLines() {
+    const lines = [];
+    document.querySelectorAll("tr.cart-item").forEach((row) => {
+      const name   = row.querySelector(".product-name")?.textContent.trim() || "";
+      const qty    = row.querySelector(".product-quantity")?.value.trim() || "1";
+      const priceT = row.querySelector(".product-price")?.textContent.trim() || "";
+      // Usamos el texto del precio mostrado (ya viene con $ y puntos)
+      lines.push(`- ${name} x${qty} - ${priceT}`);
+    });
+    return lines.join("\n");
+  }
+
+  // Toma el total mostrado (si no tiene $, lo formatea)
+  function getCartTotalText() {
+    const raw = document.getElementById("cart-total")?.textContent.trim() || "";
+    return raw.startsWith("$") ? raw : money(raw.replace(/[^\d]/g, ""));
+  }
+
+  // Delegación de eventos: captura clicks sobre cualquier .send-whatsapp
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".send-whatsapp");
+    if (!btn) return;
+
+    e.preventDefault();
+
+    const phone   = (btn.dataset.phone || "").replace(/\D/g, ""); // en formato internacional sin +
+    const vendedor= btn.dataset.nombre || "Vendedor";
+    const body    = collectCartLines();
+    const total   = getCartTotalText();
+
+    const msg = `Hola ${vendedor}, quiero realizar un pedido:\n\n${body}\n\nTotal: ${total}\n\n¡Espero tu respuesta!`;
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+
+    window.open(url, "_blank");
+  });
+
+  // (Opcional) setea etiqueta amigable en los botones si no la definiste en el template
+  document.querySelectorAll(".send-whatsapp[data-nombre]").forEach((b) => {
+    if (!b.textContent.trim()) {
+      b.textContent = `📩 Enviar a ${b.dataset.nombre}`;
+    }
+  });
+})();
