@@ -1,4 +1,4 @@
-# ShortyShop
+ # ShortyShop
 
 Tienda web de **repuestos** y **accesorios** para autos construida con **Django**.
 Incluye catálogo con filtros por **marca** y **modelo**, carrito con actualización
@@ -20,7 +20,7 @@ Opcional: envío del pedido por **WhatsApp** a un vendedor.
 ## 🧰 Instalación rápida (desarrollo)
 
 ```bash
-git clone <tu-repo> shortyshop
+git clone https://github.com/Falvarez19/ShortyShop.git shortyshop
 cd shortyshop
 
 # 1) Crear y activar venv
@@ -47,7 +47,7 @@ python manage.py runserver
 
 ### `.env` recomendado (dev)
 ```
-DEBUG=1
+DEBUG=1 
 SECRET_KEY=dev-please-change-me
 ALLOWED_HOSTS=127.0.0.1,localhost
 # DATABASE_URL opcional: si no está, se usa SQLite en db.sqlite3
@@ -209,7 +209,5 @@ Si `DATABASE_URL` está presente, se usará esa conexión en lugar de SQLite.
 
 ---
 
-## 📄 Licencia
-MIT (o la que definas).
 
 Hecho con ❤️ — ShortyShop
